@@ -11,7 +11,14 @@ class Connector:
         self.output_to = output_to
         self.input_value = 0
         self.output_value = 0
-        self.weight = random.randrange(0, 10)
+        self.weight = random.random()
+        self.calc_output()
+
+    def update_weight(self, d_w):
+        self.set_weight(self.weight + d_w)
+
+    def get_output(self):
+        return self.output_to
 
     def get_input_neuron(self):
         return self.input_from
@@ -33,3 +40,4 @@ class Connector:
 
     def calc_output(self):
         self.output_value = self.input_value * self.weight
+        return self.output_value
