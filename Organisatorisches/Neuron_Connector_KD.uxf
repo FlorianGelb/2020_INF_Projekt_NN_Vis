@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>650</x>
+      <y>210</y>
+      <w>250</w>
+      <h>480</h>
+    </coordinates>
+    <panel_attributes>Neuron
+--
+-id: Integer
+-input_state: Boolean
+-output_state: Boolean
+-input: Long[]
+-output: Long
+-learn_rule: String
+-eta: Float
+-output_to_neuron: Connector[]
+-threshhold: Long
+--activation_function: String s
+#add_output(c: Connector): Null
+#remove_output(c: Connector): Null
+#set_learn_rule(s: String): Null
+#get_learn_rule(): String rule
+#get_id(): Integer id
+#set_input(input: Long): Null
+#set_threshhold(t: Long): Null
+#set_activation_function(af: String): Null
+#get_activation_function(): String af
+-activation_function(): Null
+-scalar_product(): Null
+
+--
+Responsibilities
+Neuronale Aktivitäten:
+	-Input aufnehmen
+	-Input mit Gewichten verrechnen
+	-Aktivierungsfunktion
+	-Ausgabe an Connector Objekt</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1130</x>
+      <y>220</y>
+      <w>260</w>
+      <h>470</h>
+    </coordinates>
+    <panel_attributes>Connector
+--
+-id: Integer
+-input_from: Neuron
+-input_value: Double
+-output_to: Neuron
+-output_value: Double
+-weight: Double
+--
+#set_input_neuron(n: Neuron): Null
+#get_input_neuron(): Neuron
+#set_input_value(val: Double): Null
+#get_input_value(): Double
+#set_weight(w: Double): Null
+#get_weight(): Double
+-calc_output(): Null
+
+--
+Responsibilities
+-Werteübertragung
+-Verrechnung mit Gewichtung</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>890</x>
+      <y>330</y>
+      <w>260</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+1:n</panel_attributes>
+    <additional_attributes>10.0;20.0;240.0;20.0</additional_attributes>
+  </element>
+</diagram>
