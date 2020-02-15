@@ -6,8 +6,8 @@
     <coordinates>
       <x>650</x>
       <y>210</y>
-      <w>250</w>
-      <h>480</h>
+      <w>300</w>
+      <h>600</h>
     </coordinates>
     <panel_attributes>Neuron
 --
@@ -19,19 +19,21 @@
 -learn_rule: String
 -eta: Float
 -output_to_neuron: Connector[]
--threshhold: Long
---activation_function: String s
+-threshold: Long
+-activation_function: String s
+--
 #add_output(c: Connector): Null
 #remove_output(c: Connector): Null
 #set_learn_rule(s: String): Null
 #get_learn_rule(): String rule
 #get_id(): Integer id
 #set_input(input: Long): Null
-#set_threshhold(t: Long): Null
+#set_threshold(t: Long): Null
 #set_activation_function(af: String): Null
 #get_activation_function(): String af
--activation_function(): Null
--scalar_product(): Null
+-activation_function(x: Double): Double
+-scalar_product(): Double
+-generate_output(): Null
 
 --
 Responsibilities
@@ -59,7 +61,6 @@ Neuronale Aktivitäten:
 -output_value: Double
 -weight: Double
 --
-#set_input_neuron(n: Neuron): Null
 #get_input_neuron(): Neuron
 #set_input_value(val: Double): Null
 #get_input_value(): Double
@@ -76,13 +77,13 @@ Responsibilities
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>890</x>
+      <x>940</x>
       <y>330</y>
-      <w>260</w>
+      <w>210</w>
       <h>40</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;-
 m:n</panel_attributes>
-    <additional_attributes>10.0;20.0;240.0;20.0</additional_attributes>
+    <additional_attributes>10.0;20.0;190.0;20.0</additional_attributes>
   </element>
 </diagram>
