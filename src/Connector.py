@@ -11,7 +11,7 @@ class Connector:
         self.output_to = output_to
         self.input_value = 0
         self.output_value = 0
-        self.weight = random.random()
+        self.weight = random.random() * 10
         self.calc_output()
 
     def update_weight(self, d_w):

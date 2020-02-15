@@ -2,7 +2,7 @@ import math
 
 class Neuron:
 
-    threshold = 0
+    threshold = -100
     activation_function_type = "RELU"
     id = 0
 
@@ -133,7 +133,6 @@ class Neuron:
 
     def generate_output(self):
         new_output = self.activation_function(self.scalar_product())
-        #print(self.input)
         if new_output >= self.threshold:
             self.output = new_output
             return self.output

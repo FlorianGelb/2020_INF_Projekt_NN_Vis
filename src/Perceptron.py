@@ -9,7 +9,6 @@ class Perceptron:
         self.n_inputs = n_inputs
         self.eta = eta * 10 ** -4
         self.neuron.set_activation_function("SINUS")
-       # self.neuron.set_treshold(0.1)
 
         for n in range(n_inputs):
             self.cnt_input.append(Connector.Connector(None, self.neuron))
@@ -31,9 +30,8 @@ class Perceptron:
         inp = []
         error_dict = {}
         while True:
-          #  print(error_dict)
             l = sum([len(x) for x in error_dict.values()])
-            l_acceptable = sum([len(x) for x in error_dict.values() if x[0] <= error_level])
+            l_acceptable = sum([len(x) for x in error_dict.values() if abs(x[0]) <= error_level])
             if l_acceptable == l and l != 0:
                 break
             for i in range(len(self.train_data.keys())):
@@ -46,34 +44,13 @@ class Perceptron:
                     self.neuron.clear_input()
                     self.neuron.set_input(inp)
                     error = (key - self.neuron.generate_output())
-                    #print(error)
                     error_dict[data] = [error]
                     for i in range(len(inp)):
-                       # print(inp[i])
                         d_w = (self.eta * error * inp[i])
                         self.cnt_input[i].update_weight(d_w)
                     inp = []
                     print(str(data) + "  " + str(self.neuron.generate_output()))
 
-
-
-
-
-        '''for i in range(len(self.train_data.keys())):
-            key = list(self.train_data.keys())[i]
-            self.neuron.set_excepted_output(key)
-            for data in self.train_data[key]:
-                for n in range(self.n_inputs):
-                    self.cnt_input[n].set_input_value(data[n])
-                    inp = self.cnt_input[n].calc_output()
-                    self.neuron.clear_input()
-                    self.neuron.set_input(inp)
-                    # print(error)
-                    # print(str(n) + " " + str(self.cnt_input[n].weight) + " " + str(d_w))
-'''
-
-
-
 p = Perceptron(2, 1)
 p.set_train_data({1:[(0,1),(1,0),(1,1)], 0:[(0, 0)]})
-p.train(0.01)
+p.train(0.0001)
