@@ -16,6 +16,13 @@ class Neuron:
         self.output_to_neuron = []
         self.expected_output = 0
         self.bias = 0
+        self.cnt_input = []
+
+    def set_input_cnts(self, c):
+        self.cnt_input.append(c)
+
+    def get_input_cnts(self):
+        return self.cnt_input
 
     def set_excepted_output(self, o):
         if self.o:
@@ -53,8 +60,12 @@ class Neuron:
                 e += self.activation_function_derivatives(self.scalar_product()) * neuron.error() * connection.get_weight()
             return e
 
+    def update_bias(self, b):
+        self.set_bias(self.bias + b)
+
     def clear_input(self):
         self.input = []
+
     def get_id(self):
         return self.id
 
@@ -73,7 +84,7 @@ class Neuron:
     def scalar_product(self):
         sum = 0
         for input in self.input:
-            sum += input #Wird im Connectorobjekt bereits mit Gewicht multipliziert
+            sum += input + self.bias #Wird im Connectorobjekt bereits mit Gewicht multipliziert
         return sum
 
     def activation_function(self, x):
@@ -141,11 +152,9 @@ class Neuron:
 
     def generate_output(self):
         new_output = self.activation_function(self.scalar_product())
-        if new_output  + self.bias > self.threshold:
-            self.output = 1
-            return 1
-            #self.output = new_output + self.bias
-            #return self.output
+        if new_output > self.threshold:
+            self.output = new_output + self.bias
+            return self.output
         else:
             return 0
 
