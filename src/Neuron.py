@@ -2,8 +2,8 @@ import math
 
 class Neuron:
 
-    threshold = -100
-    activation_function_type = "RELU"
+    threshold = 0
+    activation_function_type = "LINEAR"
     id = 0
 
     def __init__(self, o):
@@ -15,12 +15,20 @@ class Neuron:
         self.output = 0
         self.output_to_neuron = []
         self.expected_output = 0
+        self.bias = 0
 
     def set_excepted_output(self, o):
         if self.o:
             self.excepted_output = o
         else:
             self.excepted_output = None
+
+    def set_bias(self, b):
+        self.bias = b
+
+    def get_bias(self):
+        return self.bias
+
 
     def add_output(self, c):
         self.output_to_neuron.append(c)
@@ -93,7 +101,7 @@ class Neuron:
             return self.der_log_10(x)
 
     def log_10(self, x):
-        math.log10(x + 1)
+        return math.log10(abs(x) + 1)
 
     def tan(self, x):
         return math.tan(x)
@@ -129,13 +137,15 @@ class Neuron:
         return (1/(self.der_sinus(x)**2))
 
     def der_log_10(self, x):
-        return 1/(x * math.log(10))
+        return 1/(abs(x) * math.log(10))
 
     def generate_output(self):
         new_output = self.activation_function(self.scalar_product())
-        if new_output >= self.threshold:
-            self.output = new_output
-            return self.output
+        if new_output  + self.bias > self.threshold:
+            self.output = 1
+            return 1
+            #self.output = new_output + self.bias
+            #return self.output
         else:
             return 0
 

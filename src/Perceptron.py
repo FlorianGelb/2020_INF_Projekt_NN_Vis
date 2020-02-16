@@ -9,7 +9,9 @@ class Perceptron:
         self.train_data = {}
         self.n_inputs = n_inputs
         self.eta = eta * 10 ** -4
-        self.neuron.set_activation_function("SINUS")
+        self.neuron.set_treshold(0.4)
+        self.neuron.set_activation_function("LOG10")
+        self.dbg_e = []
 
         for n in range(n_inputs):
             self.cnt_input.append(Connector.Connector(None, self.neuron))
@@ -31,24 +33,23 @@ class Perceptron:
         inp = []
         error_dict = {}
         while True:
-            l = sum([len(x) for x in error_dict.values()])
-            l_acceptable = sum([len(x) for x in error_dict.values() if abs(x[0]) <= error_level])
-            if l_acceptable == l and l != 0:
-                fig = plt.figure()
-                ax1 = fig.add_subplot(211)
-                ax2 = fig.add_subplot(212)
-                for i in self.cnt_input:
-                    ax1.plot([x for x in range(len(i.dbg_w_array))], i.dbg_w_array, label=i.c_id)
-                    ax2.plot([x for x in range(len(i.dbg_dw_array))], i.dbg_dw_array, label=str(i.c_id) + " dw")
-    
-                ax1.legend()
-                ax2.legend()
-                ax1.set_xlabel("Iteration")
-                ax1.set_ylabel("Gewicht")
-                ax2.set_xlabel("Iteration")
-                ax2.set_ylabel("Änderung Gewicht")
-                plt.show()
-                break
+            if len(self.dbg_e) > 0:
+                if self.dbg_e[-1] <= error_level:
+                    fig = plt.figure()
+                    ax1 = fig.add_subplot(211)
+                    ax2 = fig.add_subplot(212)
+                    for i in self.cnt_input:
+                        ax1.plot([x for x in range(len(i.dbg_w_array))], i.dbg_w_array, label=i.c_id)
+                        #ax2.plot([x for x in range(len(i.dbg_dw_array))], i.dbg_dw_array, label=str(i.c_id) + " dw")
+                    ax2.plot(self.dbg_e, label="Fehler")
+                    ax1.legend()
+                    ax2.legend()
+                    ax1.set_xlabel("Iteration")
+                    ax1.set_ylabel("Gewicht")
+                    ax2.set_xlabel("Iteration")
+                    ax2.set_ylabel("Quadratischer Fehler")
+                    plt.show()
+                    break
             for i in range(len(self.train_data.keys())):
                 key = list(self.train_data.keys())[i]
                 self.neuron.set_excepted_output(key)
@@ -65,7 +66,7 @@ class Perceptron:
                         self.cnt_input[i].update_weight(d_w)
                     inp = []
                     print(str(data) + "  " + str(self.neuron.generate_output()))
-
+            self.dbg_e.append(0.5 * (sum([x[-1] ** 2 for x in error_dict.values()])))
 p = Perceptron(2, 1)
-p.set_train_data({1:[(1,1), (1,0), (0,1)], 0:[(0, 0)]})
+p.set_train_data({1:[(1,1)], 0:[(0, 0), (1,0), (0,1)]})
 p.train(0.001)
