@@ -8,7 +8,7 @@ class Neuron:
 
     def __init__(self, o):
 
-        self.id += 1
+        Neuron.id += 1
         self.n_id = self.id
         self.o = o
         self.input = []
@@ -93,7 +93,7 @@ class Neuron:
             return self.der_log_10(x)
 
     def log_10(self, x):
-        math.log10(x)
+        math.log10(x + 1)
 
     def tan(self, x):
         return math.tan(x)

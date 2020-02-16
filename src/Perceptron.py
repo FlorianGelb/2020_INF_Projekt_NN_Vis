@@ -1,5 +1,6 @@
 import src.Neuron as Neuron
 import src.Connector as Connector
+import matplotlib.pyplot as plt
 
 class Perceptron:
     def __init__(self, n_inputs, eta):
@@ -33,6 +34,20 @@ class Perceptron:
             l = sum([len(x) for x in error_dict.values()])
             l_acceptable = sum([len(x) for x in error_dict.values() if abs(x[0]) <= error_level])
             if l_acceptable == l and l != 0:
+                fig = plt.figure()
+                ax1 = fig.add_subplot(211)
+                ax2 = fig.add_subplot(212)
+                for i in self.cnt_input:
+                    ax1.plot([x for x in range(len(i.dbg_w_array))], i.dbg_w_array, label=i.c_id)
+                    ax2.plot([x for x in range(len(i.dbg_dw_array))], i.dbg_dw_array, label=str(i.c_id) + " dw")
+    
+                ax1.legend()
+                ax2.legend()
+                ax1.set_xlabel("Iteration")
+                ax1.set_ylabel("Gewicht")
+                ax2.set_xlabel("Iteration")
+                ax2.set_ylabel("Änderung Gewicht")
+                plt.show()
                 break
             for i in range(len(self.train_data.keys())):
                 key = list(self.train_data.keys())[i]
@@ -52,5 +67,5 @@ class Perceptron:
                     print(str(data) + "  " + str(self.neuron.generate_output()))
 
 p = Perceptron(2, 1)
-p.set_train_data({1:[(0,1),(1,0),(1,1)], 0:[(0, 0)]})
-p.train(0.0001)
+p.set_train_data({1:[(1,1), (1,0), (0,1)], 0:[(0, 0)]})
+p.train(0.001)

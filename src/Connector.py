@@ -5,16 +5,19 @@ class Connector:
     id = 0
 
     def __init__(self, input_from, output_to):
-        self.c_id = self.id + 1
-        self.id += 1
+        Connector.id += 1
+        self.c_id = self.id
         self.input_from = input_from
         self.output_to = output_to
         self.input_value = 0
         self.output_value = 0
         self.weight = random.random() * 10
         self.calc_output()
+        self.dbg_w_array = []
+        self.dbg_dw_array = []
 
     def update_weight(self, d_w):
+        self.dbg_dw_array.append(d_w)
         self.set_weight(self.weight + d_w)
 
     def get_output(self):
@@ -33,7 +36,10 @@ class Connector:
         return self.output_value
 
     def set_weight(self, w):
+        self.dbg_w_array.append(w)
         self.weight = w
+
+
 
     def get_weight(self):
         return self.weight
