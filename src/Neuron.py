@@ -3,13 +3,13 @@ import math
 class Neuron:
 
     threshold = 0
-    activation_function_type = "LINEAR"
+    activation_function_type = "SINUS"
     id = 0
 
     def __init__(self, o):
 
         Neuron.id += 1
-        self.n_id = self.id
+        self.n_id = Neuron.id
         self.o = o
         self.input = []
         self.output = 0
@@ -17,6 +17,16 @@ class Neuron:
         self.expected_output = 0
         self.bias = 0
         self.cnt_input = []
+        self.add_step = True
+
+    def get_output_cnts(self):
+        return self.output_to_neuron
+
+    def set_step(self, s):
+        self.add_step = s
+
+    def get_step(self):
+        return self.add_step
 
     def set_input_cnts(self, c):
         self.cnt_input.append(c)
@@ -67,10 +77,10 @@ class Neuron:
         self.input = []
 
     def get_id(self):
-        return self.id
+        return self.n_id
 
     def set_input(self, input):
-        self.input = input
+        self.input.append(input)
 
     def set_treshold(self, t):
         self.threshold = t
@@ -98,6 +108,8 @@ class Neuron:
             return self.tan(x)
         if self.activation_function_type == "LOG10":
             return self.log_10(x)
+        if self.activation_function_type == "STEP":
+            return self.step(x)
 
     def activation_function_derivatives(self, x):
         if self.activation_function_type == "RELU":
@@ -110,6 +122,10 @@ class Neuron:
             return self.der_tan(x)
         if self.activation_function_type == "LOG10":
             return self.der_log_10(x)
+    def step(self, x):
+        if x > 0:
+            return 1
+        return 0
 
     def log_10(self, x):
         return math.log10(abs(x) + 1)
@@ -150,10 +166,16 @@ class Neuron:
     def der_log_10(self, x):
         return 1/(abs(x) * math.log(10))
 
-    def generate_output(self):
+    def generate_output(self, dbg=False):
         new_output = self.activation_function(self.scalar_product())
+        if dbg:
+            print(self.input)
         if new_output > self.threshold:
             self.output = new_output + self.bias
+            if self.add_step and self.output > 0:
+                return 1
+            elif self.add_step and self.output<=0:
+                return 0
             return self.output
         else:
             return 0
