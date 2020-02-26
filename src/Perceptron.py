@@ -9,8 +9,9 @@ class Perceptron:
         self.n_inputs = n_inputs
         self.eta = eta * 10 ** -4
         self.neuron.set_treshold(0.4)
-        self.neuron.set_activation_function("LOG10")
+        self.neuron.set_activation_function("RELU")
         self.dbg_e = []
+
 
         for n in range(n_inputs):
             self.neuron.cnt_input.append(Connector.Connector(None, self.neuron))
@@ -45,7 +46,7 @@ class Perceptron:
                     ax2.legend()
                     ax1.set_xlabel("Iteration")
                     ax1.set_ylabel("Gewicht")
-                    ax2.set_xlabel("Iteration")
+                    ax2.set_xlabel("Epoche")
                     ax2.set_ylabel("Quadratischer Fehler")
                     plt.show()
                     break
@@ -61,6 +62,7 @@ class Perceptron:
                     output = 0
                     if self.neuron.generate_output() > 0:
                         output = 1
+                    output = self.neuron.generate_output()
                     error = (key - output)
                     error_dict[data] = [error]
                     for i in range(len(inp)):
@@ -72,4 +74,4 @@ class Perceptron:
             self.dbg_e.append(0.5 * (sum([x[-1] ** 2 for x in error_dict.values()])))
 p = Perceptron(2, 1)
 p.set_train_data({1:[(1,1)], 0:[(0, 0), (1,0), (0,1)]})
-p.train(0.001)
+p.train(0.1)
