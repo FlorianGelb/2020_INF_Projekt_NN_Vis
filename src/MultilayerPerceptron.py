@@ -15,7 +15,7 @@ class Multilayerperceptron:
                 else:
                     self.neurons[i].append(n)
         for key in list(self.neurons.keys())
-            
+
         #print(self.neurons)
 
 m = Multilayerperceptron(2,2,[3,1,3])
