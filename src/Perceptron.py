@@ -18,7 +18,7 @@ class Perceptron:
 
     def set_train_data(self, learn_input) :
         if len(learn_input[0][0]) != self.n_inputs:
-            raise("Number of Inputs must match number of input cells")
+            raise Exception ("Number of Inputs must match number of input cells")
         self.train_data = learn_input
 
     def get_train_data(self):

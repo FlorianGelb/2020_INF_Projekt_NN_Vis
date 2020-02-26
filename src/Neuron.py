@@ -79,6 +79,10 @@ class Neuron:
     def get_id(self):
         return self.n_id
 
+    def fetch_input(self):
+        for cnt in self.get_input_cnts():
+            self.set_input(cnt.calc_output())
+
     def set_input(self, input):
         self.input.append(input)
 
