@@ -17,7 +17,7 @@ class Neuron:
         self.expected_output = 0
         self.bias = 0
         self.cnt_input = []
-        self.add_step = True
+        self.add_step = False
 
     def get_output_cnts(self):
         return self.output_to_neuron

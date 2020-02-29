@@ -10,7 +10,7 @@ class Multilayerperceptron:
         for i in range(len(shape)):
             for j in range(shape[i]):
                 n = Neuron.Neuron(shape[-1] == shape[i])
-                n.set_treshold(0.4)
+                n.set_treshold(0)
                 n.set_activation_function("LINEAR")
                 n.set_step(False)
                 if i not in list(self.neurons.keys()):
@@ -50,6 +50,7 @@ class Multilayerperceptron:
 
     def train(self, train_dict):
         sample = None
+        snp = None
         self.dbg_prnt_top()
         for key in list(train_dict.keys()):
             l = 0
@@ -78,6 +79,7 @@ class Multilayerperceptron:
 
                                 for o in range(len(l)):
                                     sample = l[o]
+                                    snp = l
                                     otps = cnts[o].get_output().get_output_cnts()
                                     #print(otps)
                                     cnts[o].get_output().clear_input()
@@ -98,7 +100,7 @@ class Multilayerperceptron:
                         for o in otps:
                             o.set_input_value(n.generate_output())
 
-                print("{}  {}".format(sample, self.neurons[list(self.neurons.keys())[len(self.shape) -1]][-1].generate_output()))
+                print("{}  {}".format(snp, self.neurons[list(self.neurons.keys())[len(self.shape) -1]][-1].generate_output()))
 
 
 
