@@ -44,39 +44,35 @@ class Multilayerperceptron:
                     neuron2.set_input_cnts(c)
 
     def train(self, train_dict):
-        for a in range(len(list(self.neurons.keys()))):
-            for b in range(len(self.neurons[a])):
-                n = self.neurons[a][b]
-                sample = None
-                cnts = n.get_input_cnts()
-                otps = n.get_output_cnts()
-
-                if a == 0:
-                    for k in list(train_dict.values()):
-                        if len(self.neurons[a]) * self.n_inputs == len(k):
-                            for l in k:
+        sample = None
+        for k in list(train_dict.values()):
+            for l in k:
+                for a in range(len(list(self.neurons.keys()))):
+                    for b in range(len(self.neurons[a])):
+                        n = self.neurons[a][b]
+                        cnts = n.get_input_cnts()
+                        otps = n.get_output_cnts()
+                        if a == 0:
+                            if len(self.neurons[a]) * self.n_inputs == len(l):
                                 sample = l
+                                #print(sample)
                                 for o in range(len(l)):
                                     n.clear_input()
                                     cnts[o].set_input_value(l[o])
 
-                                n.fetch_input()
-                                #print("{}  {}".format(sample, n.generate_output()))
+                                    n.fetch_input()
+                                    for o in otps:
+                                        o.set_input_value(n.generate_output())
+    
+                            else:
+                                raise Exception ("Input Dimensions must match topography")
 
-                                for o in otps:
-                                    o.set_input_value(n.generate_output())
+                        n.clear_input()
+                        n.fetch_input()
+                        for o in otps:
+                            o.set_input_value(n.generate_output())
 
-                        else:
-                            raise Exception ("Input Dimensions must match topography")
-
-                n.clear_input()
-                n.fetch_input()
-                print(n.generate_output())
-                for o in otps:
-                    o.set_input_value(n.generate_output())
-
-
-        #print("{}  {}".format(sample, self.neurons[list(self.neurons.keys())[1]][-1].generate_output()))
+                print("{}  {}".format(sample, self.neurons[list(self.neurons.keys())[1]][-1].generate_output()))
 
 
 
