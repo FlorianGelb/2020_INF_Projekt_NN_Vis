@@ -5,6 +5,7 @@ class Multilayerperceptron:
     def __init__(self, n_inputs, eta, shape):
         self.neurons = {}
         self.n_inputs = n_inputs
+        self.shape = shape
 
         for i in range(len(shape)):
             for j in range(shape[i]):
@@ -50,6 +51,16 @@ class Multilayerperceptron:
     def train(self, train_dict):
         sample = None
         self.dbg_prnt_top()
+        for key in list(train_dict.keys()):
+            l = 0
+            if type(key) == int:
+                l = 1
+            else:
+                l = len(key)
+            if l != len(self.neurons[list(self.neurons.keys())[len(self.shape) - 1]]):
+                raise Exception ("Output dimensions mus match topology")
+
+
         for k in list(train_dict.values()):
             for l in k:
                 for a in range(len(list(self.neurons.keys()))):
@@ -77,17 +88,17 @@ class Multilayerperceptron:
                                         ot.set_input_value(cnts[o].get_output().generate_output())
 
                             else:
-                                raise Exception ("Input Dimensions must match topography")
+                                raise Exception ("Input dimensions must match topography")
 
                         #else:
                         n.clear_input()
                         n.fetch_input()
-                        print("{} {} {} {}".format(a, b, n.input ,n.generate_output()))
+                        #print("{} {} {} {}".format(a, b, n.input ,n.generate_output()))
 
                         for o in otps:
                             o.set_input_value(n.generate_output())
 
-               # print("{}  {}".format(sample, self.neurons[list(self.neurons.keys())[1]][-1].generate_output()))
+                print("{}  {}".format(sample, self.neurons[list(self.neurons.keys())[len(self.shape) -1]][-1].generate_output()))
 
 
 
