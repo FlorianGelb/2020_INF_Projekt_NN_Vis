@@ -1,13 +1,12 @@
 import math
-
+import src.Connector as conn
 class Neuron:
 
     threshold = 0
     activation_function_type = "SINUS"
     id = 0
 
-    def __init__(self, o):
-
+    def __init__(self, o, eta):
         Neuron.id += 1
         self.n_id = Neuron.id
         self.o = o
@@ -18,6 +17,7 @@ class Neuron:
         self.bias = 0
         self.cnt_input = []
         self.add_step = False
+        self.eta = eta
 
     def get_output_cnts(self):
         return self.output_to_neuron
@@ -59,16 +59,9 @@ class Neuron:
         self.d_w = - self.eta * self.error() * self.output
         return self.d_w
 
-    def error(self):
-        if self.o:
-
-            return self.activation_function_derivatives(self.scalar_product()) * (self.output - self.expected_output)
-        else:
-            e = 0
-            for connection in self.output_to_neuron:
-                neuron = connection.get_output
-                e += self.activation_function_derivatives(self.scalar_product()) * neuron.error() * connection.get_weight()
-            return e
+    def error(self, error_next):
+            error_mom = self.activation_function_derivatives(self.scalar_product()) * error_next
+            return error_mom
 
     def update_bias(self, b):
         self.set_bias(self.bias + b)

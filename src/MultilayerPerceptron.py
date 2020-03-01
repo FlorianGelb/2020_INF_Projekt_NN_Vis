@@ -9,7 +9,7 @@ class Multilayerperceptron:
 
         for i in range(len(shape)):
             for j in range(shape[i]):
-                n = Neuron.Neuron(shape[-1] == shape[i])
+                n = Neuron.Neuron(i +1 == len(shape), eta)
                 n.set_treshold(0)
                 n.set_activation_function("LINEAR")
                 n.set_step(False)
@@ -21,6 +21,18 @@ class Multilayerperceptron:
         for key_prime in key_list:
             if key_list[-1] != key_prime:
                 key_secondary = key_prime + 1
+
+            elif len(key_list) == 1:
+                for i in range(len(self.neurons[key_prime])):
+                    neuron1 = self.neurons[key_prime][i]
+                    if len(neuron1.get_input_cnts()) < n_inputs:
+                        for h in range(n_inputs):
+                            neuron1.set_input_cnts(Connector.Connector(None, neuron1))
+                    c = Connector.Connector(neuron1, None)
+                    neuron1.add_output(c)
+                    break
+                break
+
             else:
                 pass
 
@@ -44,14 +56,9 @@ class Multilayerperceptron:
                     neuron1.add_output(c)
                     neuron2.set_input_cnts(c)
 
-    def dbg_prnt_top(self):
-        print(self.neurons)
-
-
     def train(self, train_dict):
         sample = None
         snp = None
-        self.dbg_prnt_top()
         for key in list(train_dict.keys()):
             l = 0
             if type(key) == int:
@@ -69,6 +76,8 @@ class Multilayerperceptron:
                         n = self.neurons[a][b]
                         cnts = n.get_input_cnts()
                         otps = n.get_output_cnts()
+
+
                         if a == 0:
                             if len(self.neurons[a]) > 1:
                                 cnts = []
@@ -95,17 +104,57 @@ class Multilayerperceptron:
                         #else:
                         n.clear_input()
                         n.fetch_input()
+
+
                         #print("{} {} {} {}".format(a, b, n.input ,n.generate_output()))
 
                         for o in otps:
                             o.set_input_value(n.generate_output())
 
-                print("{}  {}".format(snp, self.neurons[list(self.neurons.keys())[len(self.shape) -1]][-1].generate_output()))
+                if a == len(self.shape) - 1:
+                    for key, val in train_dict.items():
+                        if snp in val:
+                            expected_output = key
 
 
 
 
-m = Multilayerperceptron(1, 2, [2, 3, 1])
+
+                output_total = []
+                error_innit = []
+
+                for output_neuron in self.neurons[list(self.neurons.keys())[len(self.shape) - 1]]:
+                    output = output_neuron.generate_output()
+                    output_total.append(output)
+
+                if type(expected_output) == int:
+                    expected_output = [expected_output]
+                for i in range(len(expected_output)):
+                    error_innit.append(output_total[i] - expected_output[i])
+
+                print("{} {} {} {}".format(snp, output_total, expected_output, error_innit))
+
+                #for output_neuron in self.neurons[list(self.neurons.keys())[len(self.shape) - 1]]:
+                 #   cnts = output_neuron.get_input_cnts()
+                 #   for c in cnts:
+                       # neuron = c.get_input_neuron()
+                        #neuron.error(error_innit * c.get_weight())
+
+
+
+
+
+
+
+
+
+                #print("{}  {}".format(snp, self.neurons[list(self.neurons.keys())[len(self.shape) - 1]][-1].
+                                      #generate_output()))
+
+
+
+
+m = Multilayerperceptron(2, 0.1, [1, 1, 1])
 
 m.train(
     {1: [(1, 0), (0, 1)], 0: [(1, 1), (0, 0)]}
