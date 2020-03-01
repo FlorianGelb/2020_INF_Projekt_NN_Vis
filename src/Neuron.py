@@ -18,6 +18,7 @@ class Neuron:
         self.cnt_input = []
         self.add_step = False
         self.eta = eta
+        self.e = 0
 
     def get_output_cnts(self):
         return self.output_to_neuron
@@ -55,13 +56,14 @@ class Neuron:
             if n == c:
                 self.output_to_neuron.remove(n)
 
-    def calc_error(self):
-        self.d_w = - self.eta * self.error() * self.output
+    def calc_error(self, error_next):
+        self.d_w = - self.eta * self.error(error_next) * self.output
         return self.d_w
 
     def error(self, error_next):
             error_mom = self.activation_function_derivatives(self.scalar_product()) * error_next
-            return error_mom
+            self.e += error_mom
+            return self.e
 
     def update_bias(self, b):
         self.set_bias(self.bias + b)

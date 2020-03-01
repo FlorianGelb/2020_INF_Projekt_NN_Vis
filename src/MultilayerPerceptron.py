@@ -77,7 +77,6 @@ class Multilayerperceptron:
                         cnts = n.get_input_cnts()
                         otps = n.get_output_cnts()
 
-
                         if a == 0:
                             if len(self.neurons[a]) > 1:
                                 cnts = []
@@ -116,10 +115,6 @@ class Multilayerperceptron:
                         if snp in val:
                             expected_output = key
 
-
-
-
-
                 output_total = []
                 error_innit = []
 
@@ -132,29 +127,34 @@ class Multilayerperceptron:
                 for i in range(len(expected_output)):
                     error_innit.append(output_total[i] - expected_output[i])
 
-                print("{} {} {} {}".format(snp, output_total, expected_output, error_innit))
+               # print("{} {} {} {}".format(snp, output_total, expected_output, error_innit))
 
-                #for output_neuron in self.neurons[list(self.neurons.keys())[len(self.shape) - 1]]:
-                 #   cnts = output_neuron.get_input_cnts()
-                 #   for c in cnts:
-                       # neuron = c.get_input_neuron()
-                        #neuron.error(error_innit * c.get_weight())
+                for o in range(len(self.neurons[list(self.neurons.keys())[len(self.shape) - 1]])):
+                    self.neurons[list(self.neurons.keys())[len(self.shape) - 1]][o].e = error_innit[o]
 
+                key_list = list(self.neurons.keys())
+                key_list.reverse()
 
-
-
-
-
-
-
-
-                #print("{}  {}".format(snp, self.neurons[list(self.neurons.keys())[len(self.shape) - 1]][-1].
-                                      #generate_output()))
+                for o in key_list:
+                    for p in self.neurons[o]:
+                        cnts = p.get_input_cnts()
+                        for c in cnts:
+                            neuron = c.get_input_neuron()
+                            if neuron != None:
+                                neuron.e += p.e * c.get_weight()
 
 
 
+                print("{}  {}".format(snp, self.neurons[list(self.neurons.keys())[len(self.shape) - 1]][-1].
+                                      generate_output()))
 
-m = Multilayerperceptron(2, 0.1, [1, 1, 1])
+                for neuron in list(self.neurons.values()):
+                    neuron[0].e = 0
+
+
+
+
+m = Multilayerperceptron(2, 1, [1, 1, 1])
 
 m.train(
     {1: [(1, 0), (0, 1)], 0: [(1, 1), (0, 0)]}
