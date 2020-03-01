@@ -11,7 +11,7 @@ class Connector:
         self.output_to = output_to
         self.input_value = 0
         self.output_value = 0
-        self.weight = 0.5# random.random()
+        self.weight = 1# random.random()
         self.calc_output()
         self.dbg_w_array = []
         self.dbg_dw_array = []

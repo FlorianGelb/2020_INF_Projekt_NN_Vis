@@ -56,7 +56,7 @@ class Multilayerperceptron:
                     neuron1.add_output(c)
                     neuron2.set_input_cnts(c)
 
-    def train(self, train_dict):
+    def train(self, train_dict, alpha):
         sample = None
         snp = None
         for key in list(train_dict.keys()):
@@ -110,6 +110,10 @@ class Multilayerperceptron:
                         for o in otps:
                             o.set_input_value(n.generate_output())
 
+
+
+
+               # while 3 > alpha:
                 if a == len(self.shape) - 1:
                     for key, val in train_dict.items():
                         if snp in val:
@@ -119,15 +123,15 @@ class Multilayerperceptron:
                 error_innit = []
 
                 for output_neuron in self.neurons[list(self.neurons.keys())[len(self.shape) - 1]]:
-                    output = output_neuron.generate_output()
-                    output_total.append(output)
+                     output = output_neuron.generate_output()
+                     output_total.append(output)
 
                 if type(expected_output) == int:
                     expected_output = [expected_output]
                 for i in range(len(expected_output)):
                     error_innit.append(output_total[i] - expected_output[i])
 
-               # print("{} {} {} {}".format(snp, output_total, expected_output, error_innit))
+                   # print("{} {} {} {}".format(snp, output_total, expected_output, error_innit))
 
                 for o in range(len(self.neurons[list(self.neurons.keys())[len(self.shape) - 1]])):
                     self.neurons[list(self.neurons.keys())[len(self.shape) - 1]][o].e = error_innit[o]
@@ -145,17 +149,19 @@ class Multilayerperceptron:
 
 
 
-                print("{}  {}".format(snp, self.neurons[list(self.neurons.keys())[len(self.shape) - 1]][-1].
-                                      generate_output()))
+                    #print("{}  {}".format(snp, self.neurons[list(self.neurons.keys())[len(self.shape) - 1]][-1].
+                     #                     generate_output()))
 
                 for neuron in list(self.neurons.values()):
-                    neuron[0].e = 0
+                    for n in neuron:
+                        #    print (n.e)
+                        n.e = 0
+
+                print(sum(error_innit))
 
 
-
-
-m = Multilayerperceptron(2, 1, [1, 1, 1])
+m = Multilayerperceptron(2, 1, [1, 2,2])
 
 m.train(
-    {1: [(1, 0), (0, 1)], 0: [(1, 1), (0, 0)]}
+    {(0,1): [(1, 0), (0, 1)], (1,0): [(1, 1), (0, 0)]}, 1
 )
