@@ -56,8 +56,8 @@ class Neuron:
             if n == c:
                 self.output_to_neuron.remove(n)
 
-    def calc_error(self, e):
-        self.d_w = - (self.eta * e * self.output)
+    def calc_error(self, output):
+        self.d_w = - (self.eta * self.e * output)
         return self.d_w
 
     def error(self, error_next):

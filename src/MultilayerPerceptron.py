@@ -10,8 +10,8 @@ class Multilayerperceptron:
         for i in range(len(shape)):
             for j in range(shape[i]):
                 n = Neuron.Neuron(i +1 == len(shape), eta)
-                n.set_treshold(-10000000000000)
-                n.set_activation_function("LINEAR")
+                n.set_treshold(-1000000)
+                n.set_activation_function("SINUS")
                 n.set_step(False)
                 if i not in list(self.neurons.keys()):
                     self.neurons[i] = [n]
@@ -152,18 +152,17 @@ class Multilayerperceptron:
                                 if neuron != None:
                                     neuron.e += p.activation_function_derivatives(p.scalar_product()) * p.e * c.get_weight()
 
-                    print("{} {} {} {} {}".format(snp, output_total, expected_output, error_innit, total_ouptut_error))
-                    for neuron in list(self.neurons.values()):
-                        for n in neuron:
-                            #print(n.e)
-                            for c in n.get_output_cnts():
-                                print(c.get_weight())
-                                if c.get_output() is None:
-                                    break
+                            for c in p.get_input_cnts():
+                                #print(c)
+                                if c.get_input_neuron() is None:
+                                    inp = c.get_input_value()
+                                else:
+                                    inp = c.get_input_neuron().generate_output()
+                                c.update_weight(p.calc_error(inp))
+                                p.e = 0
 
-                                c.update_weight(n.calc_error(c.get_output().e))
-                                    #print (n.e)
-                            n.e = 0
+                    print("{} {} {} {} {}".format(snp, output_total, expected_output, error_innit, total_ouptut_error))
+
 
                     for e in error_innit:
                         if total_ouptut_error is None:
@@ -173,7 +172,7 @@ class Multilayerperceptron:
                    # if snp == (1, 1):
                         #print("{} {} {} {} {}".format(snp, output_total, expected_output, error_innit, total_ouptut_error))
 
-            if dbg_cntr == 100000:
+            if total_ouptut_error <= alpha:
                 break
                    # print("{}  {} {} {}".format(snp, self.neurons[list(self.neurons.keys())[len(self.shape) - 1]][-1].
 #                                            generate_output(), error_innit, total_ouptut_error))
@@ -189,8 +188,8 @@ class Multilayerperceptron:
 
 
 
-m = Multilayerperceptron(2, 0.0001, [1, 1,1])
+m = Multilayerperceptron(2, 10**-1, [1])
 
 m.train(
-    {1: [(1, 0), (0, 1)], 0: [(1, 1), (0, 0)]}, 0.0001
+    {1: [(1,1)], 0: [(0, 0), (0,1), (1,0)]}, 0.1
 )
