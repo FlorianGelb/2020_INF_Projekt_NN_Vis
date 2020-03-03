@@ -10,7 +10,7 @@ class Multilayerperceptron:
         for i in range(len(shape)):
             for j in range(shape[i]):
                 n = Neuron.Neuron(i +1 == len(shape), eta)
-                n.set_treshold(0)
+                n.set_treshold(-10000000000000)
                 n.set_activation_function("LINEAR")
                 n.set_step(False)
                 if i not in list(self.neurons.keys()):
@@ -56,106 +56,141 @@ class Multilayerperceptron:
                     neuron1.add_output(c)
                     neuron2.set_input_cnts(c)
 
-    def train(self, train_dict):
+    def train(self, train_dict, alpha):
         sample = None
         snp = None
-        for key in list(train_dict.keys()):
-            l = 0
-            if type(key) == int:
-                l = 1
-            else:
-                l = len(key)
-            if l != len(self.neurons[list(self.neurons.keys())[len(self.shape) - 1]]):
-                raise Exception ("Output dimensions mus match topology")
+        dbg_cntr = 0
+
+        while True:
+            dbg_cntr += 1
+            total_ouptut_error = None
+            for key in list(train_dict.keys()):
+                l = 0
+                if type(key) == int:
+                    l = 1
+                else:
+                    l = len(key)
+                if l != len(self.neurons[list(self.neurons.keys())[len(self.shape) - 1]]):
+                    raise Exception ("Output dimensions mus match topology")
 
 
-        for k in list(train_dict.values()):
-            for l in k:
-                for a in range(len(list(self.neurons.keys()))):
-                    for b in range(len(self.neurons[a])):
-                        n = self.neurons[a][b]
-                        cnts = n.get_input_cnts()
-                        otps = n.get_output_cnts()
+            for k in list(train_dict.values()):
+                for l in k:
+                    for a in range(len(list(self.neurons.keys()))):
+                        for b in range(len(self.neurons[a])):
+                            n = self.neurons[a][b]
+                            cnts = n.get_input_cnts()
+                            otps = n.get_output_cnts()
+
+                            if a == 0:
+                                if len(self.neurons[a]) > 1:
+                                    cnts = []
+                                    for neuron in self.neurons[a]:
+                                        for c in neuron.get_input_cnts():
+                                            cnts.append(c)
+                                if len(self.neurons[a]) * self.n_inputs == len(l):
+
+                                    for o in range(len(l)):
+                                        sample = l[o]
+                                        snp = l
+                                        otps = cnts[o].get_output().get_output_cnts()
+                                        #print(otps)
+                                        cnts[o].get_output().clear_input()
+                                        cnts[o].set_input_value(l[o])
+                                        #print("{}  {}  {}".format(l, cnts[o].get_input_value(), n))
+                                        cnts[o].get_output().fetch_input()
+                                        for ot in otps:
+                                            ot.set_input_value(cnts[o].get_output().generate_output())
+
+                                else:
+                                    raise Exception ("Input dimensions must match topography")
+
+                            #else:
+                            n.clear_input()
+                            n.fetch_input()
 
 
-                        if a == 0:
-                            if len(self.neurons[a]) > 1:
-                                cnts = []
-                                for neuron in self.neurons[a]:
-                                    for c in neuron.get_input_cnts():
-                                        cnts.append(c)
-                            if len(self.neurons[a]) * self.n_inputs == len(l):
+                            #print("{} {} {} {}".format(a, b, n.input ,n.generate_output()))
 
-                                for o in range(len(l)):
-                                    sample = l[o]
-                                    snp = l
-                                    otps = cnts[o].get_output().get_output_cnts()
-                                    #print(otps)
-                                    cnts[o].get_output().clear_input()
-                                    cnts[o].set_input_value(l[o])
-                                    #print("{}  {}  {}".format(l, cnts[o].get_input_value(), n))
-                                    cnts[o].get_output().fetch_input()
-                                    for ot in otps:
-                                        ot.set_input_value(cnts[o].get_output().generate_output())
-
-                            else:
-                                raise Exception ("Input dimensions must match topography")
-
-                        #else:
-                        n.clear_input()
-                        n.fetch_input()
-
-
-                        #print("{} {} {} {}".format(a, b, n.input ,n.generate_output()))
-
-                        for o in otps:
-                            o.set_input_value(n.generate_output())
-
-                if a == len(self.shape) - 1:
-                    for key, val in train_dict.items():
-                        if snp in val:
-                            expected_output = key
-
-
-
-
-
-                output_total = []
-                error_innit = []
-
-                for output_neuron in self.neurons[list(self.neurons.keys())[len(self.shape) - 1]]:
-                    output = output_neuron.generate_output()
-                    output_total.append(output)
-
-                if type(expected_output) == int:
-                    expected_output = [expected_output]
-                for i in range(len(expected_output)):
-                    error_innit.append(output_total[i] - expected_output[i])
-
-                #print("{} {} {} {}".format(snp, output_total, expected_output, error_innit))
-
-                for output_neuron in self.neurons[list(self.neurons.keys())[len(self.shape) - 1]]:
-                    cnts = output_neuron.get_input_cnts()
-                    for c in cnts:
-                        neuron = c.get_input_neuron()
-                        neuron.error(error_innit * c.get_weight())
+                            for o in otps:
+                                o.set_input_value(n.generate_output())
 
 
 
 
 
+                    if a == len(self.shape) - 1:
+                        for key, val in train_dict.items():
+                            if snp in val:
+                                expected_output = key
+
+                    output_total = []
+                    error_innit = []
+
+                    for output_neuron in self.neurons[list(self.neurons.keys())[len(self.shape) - 1]]:
+                        output = output_neuron.generate_output()
+                        output_total.append(output)
+
+                    if type(expected_output) == int:
+                        expected_output = [expected_output]
+                    for i in range(len(expected_output)):
+                        error_innit.append(output_neuron.activation_function_derivatives(output_neuron.scalar_product()) * (output_total[i] - expected_output[i]))
+
+
+
+                    for o in range(len(self.neurons[list(self.neurons.keys())[len(self.shape) - 1]])):
+                        self.neurons[list(self.neurons.keys())[len(self.shape) - 1]][o].e = error_innit[o]
+
+                    key_list = list(self.neurons.keys())
+                    key_list.reverse()
+
+                    for o in key_list:
+                        for p in self.neurons[o]:
+                            cnts = p.get_input_cnts()
+                            for c in cnts:
+                                neuron = c.get_input_neuron()
+                                if neuron != None:
+                                    neuron.e += p.activation_function_derivatives(p.scalar_product()) * p.e * c.get_weight()
+
+                    print("{} {} {} {} {}".format(snp, output_total, expected_output, error_innit, total_ouptut_error))
+                    for neuron in list(self.neurons.values()):
+                        for n in neuron:
+                            #print(n.e)
+                            for c in n.get_output_cnts():
+                                print(c.get_weight())
+                                if c.get_output() is None:
+                                    break
+
+                                c.update_weight(n.calc_error(c.get_output().e))
+                                    #print (n.e)
+                            n.e = 0
+
+                    for e in error_innit:
+                        if total_ouptut_error is None:
+                            total_ouptut_error = 0.5* (e **2)
+                        else:
+                            total_ouptut_error += 0.5* (e **2)
+                   # if snp == (1, 1):
+                        #print("{} {} {} {} {}".format(snp, output_total, expected_output, error_innit, total_ouptut_error))
+
+            if dbg_cntr == 100000:
+                break
+                   # print("{}  {} {} {}".format(snp, self.neurons[list(self.neurons.keys())[len(self.shape) - 1]][-1].
+#                                            generate_output(), error_innit, total_ouptut_error))
 
 
 
 
-                #print("{}  {}".format(snp, self.neurons[list(self.neurons.keys())[len(self.shape) - 1]][-1].
-                                      #generate_output()))
+
+         #       print(error_innit)
+        #print(total_ouptut_error)
 
 
 
 
-m = Multilayerperceptron(2, 0.1, [1, 1, 1])
+
+m = Multilayerperceptron(2, 0.0001, [1, 1,1])
 
 m.train(
-    {1: [(1, 0), (0, 1)], 0: [(1, 1), (0, 0)]}
+    {1: [(1, 0), (0, 1)], 0: [(1, 1), (0, 0)]}, 0.0001
 )

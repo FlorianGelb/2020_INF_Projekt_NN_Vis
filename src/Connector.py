@@ -11,12 +11,13 @@ class Connector:
         self.output_to = output_to
         self.input_value = 0
         self.output_value = 0
-        self.weight = 0.5# random.random()
+        self.weight = 1#random.random()
         self.calc_output()
         self.dbg_w_array = []
         self.dbg_dw_array = []
 
     def update_weight(self, d_w):
+        #print(d_w)
         self.dbg_dw_array.append(d_w)
         self.set_weight(self.weight + d_w)
 
