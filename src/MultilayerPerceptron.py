@@ -132,13 +132,13 @@ class Multilayerperceptron:
                 for i in range(len(expected_output)):
                     error_innit.append(output_total[i] - expected_output[i])
 
-                print("{} {} {} {}".format(snp, output_total, expected_output, error_innit))
+                #print("{} {} {} {}".format(snp, output_total, expected_output, error_innit))
 
-                #for output_neuron in self.neurons[list(self.neurons.keys())[len(self.shape) - 1]]:
-                 #   cnts = output_neuron.get_input_cnts()
-                 #   for c in cnts:
-                       # neuron = c.get_input_neuron()
-                        #neuron.error(error_innit * c.get_weight())
+                for output_neuron in self.neurons[list(self.neurons.keys())[len(self.shape) - 1]]:
+                    cnts = output_neuron.get_input_cnts()
+                    for c in cnts:
+                        neuron = c.get_input_neuron()
+                        neuron.error(error_innit * c.get_weight())
 
 
 
