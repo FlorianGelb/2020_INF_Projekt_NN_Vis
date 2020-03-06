@@ -1,5 +1,5 @@
 import math
-import src.Connector as conn
+import src.NN.Connector as conn
 class Neuron:
 
     threshold = 0

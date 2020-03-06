@@ -1,5 +1,5 @@
-import src.Neuron as Neuron
-import src.Connector as Connector
+import src.NN.Neuron as Neuron
+import src.NN.Connector as Connector
 import matplotlib.pyplot as plt
 
 class Perceptron:

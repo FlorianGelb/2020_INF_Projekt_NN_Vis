@@ -1,5 +1,5 @@
-import src.Neuron as Neuron
-import src.Connector as Connector
+import src.NN.Neuron as Neuron
+import src.NN.Connector as Connector
 
 class Multilayerperceptron:
     def __init__(self, n_inputs, eta, shape):
@@ -11,7 +11,7 @@ class Multilayerperceptron:
             for j in range(shape[i]):
                 n = Neuron.Neuron(i +1 == len(shape), eta)
                 n.set_treshold(-1000000)
-                n.set_activation_function("SINUS")
+                n.set_activation_function("LINEAR")
                 n.set_step(False)
                 if i not in list(self.neurons.keys()):
                     self.neurons[i] = [n]
@@ -161,7 +161,7 @@ class Multilayerperceptron:
                                 c.update_weight(p.calc_error(inp))
                                 p.e = 0
 
-                    print("{} {} {} {} {}".format(snp, output_total, expected_output, error_innit, total_ouptut_error))
+                    print("{} {} {} {}".format(snp, output_total, expected_output, error_innit))
 
 
                     for e in error_innit:
@@ -172,6 +172,7 @@ class Multilayerperceptron:
                    # if snp == (1, 1):
                         #print("{} {} {} {} {}".format(snp, output_total, expected_output, error_innit, total_ouptut_error))
 
+            print(total_ouptut_error)
             if total_ouptut_error <= alpha:
                 break
                    # print("{}  {} {} {}".format(snp, self.neurons[list(self.neurons.keys())[len(self.shape) - 1]][-1].
@@ -187,9 +188,9 @@ class Multilayerperceptron:
 
 
 
+if __name__ ==  "__main__":
+    m = Multilayerperceptron(1, 0.00001 , [2, 1000, 1, 1])
 
-m = Multilayerperceptron(2, 10**-1, [1])
-
-m.train(
-    {1: [(1,1)], 0: [(0, 0), (0,1), (1,0)]}, 0.1
+    m.train(
+        {1: [(1,1)], 0: [(0, 0), (0,1), (1,0)]}, 0.01
 )
