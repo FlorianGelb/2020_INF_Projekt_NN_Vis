@@ -1,23 +1,16 @@
-
 import pyqtgraph as pg
 
 
 class CustomNode(pg.GraphItem):
-
     def __init__(self):
         pg.GraphItem.__init__(self)
         self.text = []
         self.set_color("yellow")
 
+
     def set_color(self, col):
-        color_translation = {"yellow" :"y" ,"red" :"r" ,"blue" :"b", \
-                             "green" :"g", "cyan" :"c", "magneta" :"m", "black" :"k", "white" :"w"}
         if col is None:
             col == "black"
-
-        # c = pg.mkColor(color_translation[col])
-
-        # self.setData(brush=c)
 
     def create_text(self, txt, pos):
         if txt and pos is not None:

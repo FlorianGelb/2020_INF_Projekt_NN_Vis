@@ -4,11 +4,11 @@ class Neuron:
 
     threshold = 0
     activation_function_type = "SINUS"
-    id = 0
+    Neuron_ID = 0
 
     def __init__(self, o, eta):
-        Neuron.id += 1
-        self.n_id = Neuron.id
+        self.n_id = Neuron.Neuron_ID
+        Neuron.Neuron_ID += 1
         self.o = o
         self.input = []
         self.output = 0

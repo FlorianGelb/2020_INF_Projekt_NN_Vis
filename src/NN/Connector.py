@@ -5,8 +5,8 @@ class Connector:
     id = 0
 
     def __init__(self, input_from, output_to):
+        self.c_id = Connector.id
         Connector.id += 1
-        self.c_id = self.id
         self.input_from = input_from
         self.output_to = output_to
         self.input_value = 0
