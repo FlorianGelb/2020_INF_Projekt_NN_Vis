@@ -13,33 +13,18 @@ v.setAspectLocked()
 
 
 T = TP()
-m = mlp.Multilayerperceptron(2, 1, [2,3,1])
+m = mlp.Multilayerperceptron(2, 1, [3,4,1])
 
 print(m.neurons)
 y_off = 10
 x_off = 5
 for key in m.neurons:
-    up = []
-    down = []
+    pos = 0
     for neuron in m.neurons[key]:
-        pos = m.neurons[key].index(neuron) + 2
-        if pos == 0:
-            T.add_node(key * y_off, pos * x_off)
-            break
-        if pos % 2 == 0:
-            up.append(neuron)
-        else:
-            down.append(neuron)
+        index = m.neurons[key].index(neuron)
+        pos = (len(m.neurons[key]) / 2) * x_off
 
-    for neuron in up:
-        pos = up.index(neuron) + 1
-        T.add_node(key * y_off, pos  * x_off)
-
-    for neuron in down:
-        pos = down.index(neuron) + 1
-        x_off = - x_off
-        T.add_node(key * y_off, pos * x_off)
-
+        T.add_node(key * y_off,  pos - (index * x_off))
 
 T.set_text("a")
 T.update_graph()
