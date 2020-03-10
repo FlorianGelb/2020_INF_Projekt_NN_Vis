@@ -3,20 +3,23 @@ import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtGui
 from src.NN import MultilayerPerceptron as mlp
 
-# Enable antialiasing for prettier plots
-pg.setConfigOptions(antialias=True)
 
-w = pg.GraphicsWindow()
-w.setWindowTitle('pyqtgraph example: GraphItem')
-v = w.addViewBox()
-v.setAspectLocked()
+class PlottingWidget(mlp.Multilayerperceptron):
+
+    def _init__(self, n, eta, layers):
+        mlp.Multilayerperceptron.__init__(n, eta, layers)
+        pg.setConfigOptions(antialias=True)
+
+        self.w = pg.GraphicsWindow()
+        self.w.setWindowTitle('pyqtgraph example: GraphItem')
+        self.v = self.w.addViewBox()
+        self.v.setAspectLocked()
+        self.T = TP()
+        self.v.addItem(T.tree_plot_item)
 
 
-T = TP()
-m = mlp.Multilayerperceptron(1, 1, [2, 3,1])
-
-y_off = 10
-x_off = 5
+        y_off = 10
+        x_off = 5
 
 
 for key in m.neurons:
