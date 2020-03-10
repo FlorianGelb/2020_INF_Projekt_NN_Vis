@@ -21,25 +21,12 @@ x_off = 5
 for key in m.neurons:
     up = []
     down = []
+    l = 0
     for neuron in m.neurons[key]:
         pos = m.neurons[key].index(neuron) + 2
-        if pos == 0:
-            T.add_node(key * y_off, pos * x_off)
-            break
-        if pos % 2 == 0:
-            up.append(neuron)
-        else:
-            down.append(neuron)
-
-    for neuron in up:
-        pos = up.index(neuron) + 1
-        T.add_node(key * y_off, pos  * x_off)
-
-    for neuron in down:
-        pos = down.index(neuron) + 1
-        x_off = - x_off
-        T.add_node(key * y_off, pos * x_off)
-
+        if len(m.neurons[key]) > l:
+         l = len(m.neurons[key])
+        T.add_node(key * y_off, (l / 2) - (l * x_off))
 
 T.set_text("a")
 T.update_graph()
