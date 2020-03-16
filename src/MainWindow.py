@@ -31,16 +31,16 @@ class PlottingWidget(mlp.Multilayerperceptron):
                     if cnt.get_input_neuron() is not None and cnt.get_output() is not None:
                         self.T.set_connection(cnt.get_input_neuron().n_id, cnt.get_output().n_id, 255,255,255,255, 1)
 
-        l = len(self.T.pos)
+        '''l = len(self.T.pos)
         for neuron in self.neurons[0]:
             for cnt in neuron.get_input_cnts():
                 if cnt.get_input_neuron() is None:
                     for i in range(n * len(self.neurons[0])):
                         self.T.add_node(-y_off, (n * len(self.neurons[0]) / 2) * x_off - (i * x_off))
 
-        for j in range(n * len(self.neurons[0])):
-            self.T.set_connection(-j,  l - j, 255, 255, 255,
-                                            255, 1)
+                for j in range(n * len(self.neurons[0])):
+                    self.T.set_connection(-j,  cnt.get_output().n_id, 255, 255, 255,
+                                            255, 1)'''
 
 
 

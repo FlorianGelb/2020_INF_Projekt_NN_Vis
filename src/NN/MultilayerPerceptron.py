@@ -6,6 +6,8 @@ class Multilayerperceptron:
         self.neurons = {}
         self.n_inputs = n_inputs
         self.shape = shape
+        self.shape.insert(0, n_inputs * shape[0])
+        self.shape.insert(-1, shape[-1])
 
 
         for i in range(len(shape)):
@@ -44,9 +46,12 @@ class Multilayerperceptron:
                     neuron2 = self.neurons[key_secondary][j]
 
                     if key_prime == 0:
+                        break
+
+                    if key_prime == 1:
                         if len(neuron1.get_input_cnts()) < n_inputs:
-                            for h in range(n_inputs):
-                                neuron1.set_input_cnts(Connector.Connector(None, neuron1))
+                            for h in range(n_inputs * i, n_inputs * i + (n_inputs)):
+                                neuron1.set_input_cnts(Connector.Connector(self.neurons[0][h], neuron1))
 
                     elif key_prime == key_list[-1]:
                         c = Connector.Connector(neuron1, None)
