@@ -7,6 +7,7 @@ class Multilayerperceptron:
         self.n_inputs = n_inputs
         self.shape = shape
 
+
         for i in range(len(shape)):
             for j in range(shape[i]):
                 n = Neuron.Neuron(i +1 == len(shape), eta)
@@ -17,6 +18,7 @@ class Multilayerperceptron:
                     self.neurons[i] = [n]
                 else:
                     self.neurons[i].append(n)
+
         key_list = list(self.neurons.keys())
         for key_prime in key_list:
             if key_list[-1] != key_prime:
@@ -189,7 +191,7 @@ class Multilayerperceptron:
 
 
 if __name__ ==  "__main__":
-    m = Multilayerperceptron(1, 0.00001 , [2, 1000, 1, 1])
+    m = Multilayerperceptron(2, 0.00001 , [1])
 
     m.train(
         {1: [(1,1)], 0: [(0, 0), (0,1), (1,0)]}, 0.01
