@@ -53,11 +53,20 @@ class Multilayerperceptron:
                             for h in range(n_inputs * i, n_inputs * i + (n_inputs)):
                                 neuron1.set_input_cnts(Connector.Connector(self.neurons[0][h], neuron1))
 
-                    elif key_prime == key_list[-1]:
-                        c = Connector.Connector(neuron1, None)
+                    elif key_prime == key_list[-2]:
+                      #  print(self.neurons[key_list[-1]][i].n_id)
+                       # print(neuron1.n_id)
+                        c = Connector.Connector(neuron1, self.neurons[key_list[-1]][i])
                         neuron1.add_output(c)
+                        self.neurons[key_list[-1]][i].set_input_cnts(c)
+
+                        for cnt in neuron1.get_output_cnts():
+                            print(cnt.get_output().n_id)
+
                         break
 
+                    elif key_prime == key_list[-1]:
+                        break
 
                     c = Connector.Connector(neuron1, neuron2)
                     neuron1.add_output(c)
