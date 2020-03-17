@@ -6,10 +6,11 @@ class Neuron:
     activation_function_type = "SINUS"
     Neuron_ID = 0
 
-    def __init__(self, o, eta):
+    def __init__(self, o,i, eta):
         self.n_id = Neuron.Neuron_ID
         Neuron.Neuron_ID += 1
         self.o = o
+        self.i = i
         self.input = []
         self.output = 0
         self.output_to_neuron = []
@@ -19,6 +20,8 @@ class Neuron:
         self.add_step = False
         self.eta = eta
         self.e = 0
+
+
 
     def get_output_cnts(self):
         return self.output_to_neuron

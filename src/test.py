@@ -7,7 +7,7 @@ class Test(MWG.Ui_MainWindow):
 
     def setupUi(self, MainWindow):
         super().setupUi(MainWindow)
-        self.M = MW.PlottingWidget(3, 1, [2,1,2])
+        self.M = MW.PlottingWidget(1, 1, [2,1,1])
         self.tree_plot_item = self.M.tree_plot_item
         self.viewbox = self.widget.addViewBox(enableMenu=False)
         self.viewbox.addItem(self.tree_plot_item)

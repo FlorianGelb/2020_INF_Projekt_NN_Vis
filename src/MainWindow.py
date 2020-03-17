@@ -14,14 +14,21 @@ class PlottingWidget(mlp.Multilayerperceptron):
         y_off = 10
         x_off = 5
 
-
         for key in self.neurons:
-            pos = 0
             for neuron in self.neurons[key]:
                 index = self.neurons[key].index(neuron)
                 pos = (len(self.neurons[key]) / 2) * x_off
                 self.T.add_node(key * y_off,  pos - (index * x_off))
-                self.T.set_text(str(neuron.n_id))
+
+                if key == 0 or key == len(self.neurons) -1:
+                    self.T.set_symbol('s')
+                    self.T.set_node_size(0.5)
+                    self.T.set_text(str(neuron.input))
+                else:
+                    self.T.set_symbol('o')
+                    self.T.set_node_size(1)
+                    self.T.set_text(str(neuron.n_id))
+
 
 
 
@@ -31,16 +38,6 @@ class PlottingWidget(mlp.Multilayerperceptron):
                     if cnt.get_input_neuron() is not None and cnt.get_output() is not None:
                         self.T.set_connection(cnt.get_input_neuron().n_id, cnt.get_output().n_id, 255,255,255,255, 1)
 
-        '''l = len(self.T.pos)
-        for neuron in self.neurons[0]:
-            for cnt in neuron.get_input_cnts():
-                if cnt.get_input_neuron() is None:
-                    for i in range(n * len(self.neurons[0])):
-                        self.T.add_node(-y_off, (n * len(self.neurons[0]) / 2) * x_off - (i * x_off))
-
-                for j in range(n * len(self.neurons[0])):
-                    self.T.set_connection(-j,  cnt.get_output().n_id, 255, 255, 255,
-                                            255, 1)'''
 
 
 

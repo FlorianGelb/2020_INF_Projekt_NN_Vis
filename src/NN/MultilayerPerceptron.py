@@ -12,7 +12,7 @@ class Multilayerperceptron:
 
         for i in range(len(shape)):
             for j in range(shape[i]):
-                n = Neuron.Neuron(i +1 == len(shape), eta)
+                n = Neuron.Neuron(i +1 == len(shape),i == 0,eta)
                 n.set_treshold(-1000000)
                 n.set_activation_function("LINEAR")
                 n.set_step(False)
@@ -54,8 +54,6 @@ class Multilayerperceptron:
                                 neuron1.set_input_cnts(Connector.Connector(self.neurons[0][h], neuron1))
 
                     elif key_prime == key_list[-2]:
-                      #  print(self.neurons[key_list[-1]][i].n_id)
-                       # print(neuron1.n_id)
                         c = Connector.Connector(neuron1, self.neurons[key_list[-1]][i])
                         neuron1.add_output(c)
                         self.neurons[key_list[-1]][i].set_input_cnts(c)
@@ -104,36 +102,27 @@ class Multilayerperceptron:
                                     for neuron in self.neurons[a]:
                                         for c in neuron.get_input_cnts():
                                             cnts.append(c)
+
                                 if len(self.neurons[a]) * self.n_inputs == len(l):
 
                                     for o in range(len(l)):
-                                        sample = l[o]
                                         snp = l
-                                        otps = cnts[o].get_output().get_output_cnts()
-                                        #print(otps)
-                                        cnts[o].get_output().clear_input()
-                                        cnts[o].set_input_value(l[o])
-                                        #print("{}  {}  {}".format(l, cnts[o].get_input_value(), n))
-                                        cnts[o].get_output().fetch_input()
+                                        otps = self.neurons[a][o].get_output_cnts()
+                                        self.neurons[a][o].clear_input()
+                                        self.neurons[a][o].set_input(l[o])
+                                        self.neurons[a][o].fetch_input()
+
                                         for ot in otps:
                                             ot.set_input_value(cnts[o].get_output().generate_output())
 
                                 else:
                                     raise Exception ("Input dimensions must match topography")
 
-                            #else:
                             n.clear_input()
                             n.fetch_input()
 
-
-                            #print("{} {} {} {}".format(a, b, n.input ,n.generate_output()))
-
                             for o in otps:
                                 o.set_input_value(n.generate_output())
-
-
-
-
 
                     if a == len(self.shape) - 1:
                         for key, val in train_dict.items():
@@ -151,8 +140,6 @@ class Multilayerperceptron:
                         expected_output = [expected_output]
                     for i in range(len(expected_output)):
                         error_innit.append(output_neuron.activation_function_derivatives(output_neuron.scalar_product()) * (output_total[i] - expected_output[i]))
-
-
 
                     for o in range(len(self.neurons[list(self.neurons.keys())[len(self.shape) - 1]])):
                         self.neurons[list(self.neurons.keys())[len(self.shape) - 1]][o].e = error_innit[o]
@@ -191,16 +178,6 @@ class Multilayerperceptron:
             print(total_ouptut_error)
             if total_ouptut_error <= alpha:
                 break
-                   # print("{}  {} {} {}".format(snp, self.neurons[list(self.neurons.keys())[len(self.shape) - 1]][-1].
-#                                            generate_output(), error_innit, total_ouptut_error))
-
-
-
-
-
-         #       print(error_innit)
-        #print(total_ouptut_error)
-
 
 
 

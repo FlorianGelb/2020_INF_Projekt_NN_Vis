@@ -11,11 +11,12 @@ class TreePlot:
         self.pos = np.array([[None, None]])
         self.connections = np.array([[0, 0]], dtype=int)
         self.lines = None
-        self.size = 1
+        self.size = []
         self.text = []
         self.color = "black"
         pg.setConfigOptions(antialias=True)
         self.tree_plot_item = CustomNode.CustomNode()
+        self.symbol = []
 
     def add_node(self, x, y):
         buffer = np.array([[x, y]])
@@ -25,8 +26,11 @@ class TreePlot:
         else:
             self.pos = np.concatenate((self.pos, buffer))
 
+    def set_symbol(self, s):
+        self.symbol.append(s)
+
     def update_graph(self):
-        self.tree_plot_item.setData(pos=self.pos, adj=self.connections, pen=self.lines, size=1, sysmbol='o', \
+        self.tree_plot_item.setData(pos=self.pos, adj=self.connections, pen=self.lines, size=self.size, symbol=self.symbol, \
                                     pxMode=False, text=self.text)
 
     def set_connection(self, node_index_1, node_index_2, r, g, b, a, w):
@@ -40,7 +44,7 @@ class TreePlot:
         self.set_lines(r, g, b, a, w)
 
     def set_node_size(self, s):
-        self.size = s
+        self.size.append(s)
 
     def set_text(self, t):
         self.text.append(t)
