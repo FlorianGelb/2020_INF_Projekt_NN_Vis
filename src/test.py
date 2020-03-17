@@ -7,13 +7,12 @@ class Test(MWG.Ui_MainWindow):
 
     def setupUi(self, MainWindow):
         super().setupUi(MainWindow)
-        self.M = MW.PlottingWidget(1, 1, [2,1,1])
+        self.M = MW.PlottingWidget(1, 1, [2,3,1])
         self.tree_plot_item = self.M.tree_plot_item
         self.viewbox = self.widget.addViewBox(enableMenu=False)
         self.viewbox.addItem(self.tree_plot_item)
         self.viewbox.addItem(self.tree_plot_item)
         self.M.T.update_graph()
-        #self.M.train({1: [(1,1), (0,1), (1,0)], 0:[(0,0)]}, 0.19)
 
 
 

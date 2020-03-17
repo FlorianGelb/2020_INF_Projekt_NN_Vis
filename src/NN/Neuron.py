@@ -78,6 +78,7 @@ class Neuron:
         return self.n_id
 
     def fetch_input(self):
+        self.clear_input()
         for cnt in self.get_input_cnts():
             self.set_input(cnt.calc_output())
 
