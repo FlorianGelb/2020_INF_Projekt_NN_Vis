@@ -18,6 +18,20 @@ class TreePlot:
         self.tree_plot_item = CustomNode.CustomNode()
         self.symbol = []
 
+    def reset(self):
+        self.window = None
+        self.viewbox = None
+        self.tree_plot_item = None
+        self.pos = np.array([[None, None]])
+        self.connections = np.array([[0, 0]], dtype=int)
+        self.lines = None
+        self.size = []
+        self.text = []
+        self.color = "black"
+        pg.setConfigOptions(antialias=True)
+        self.tree_plot_item = CustomNode.CustomNode()
+        self.symbol = []
+
     def add_node(self, x, y):
         buffer = np.array([[x, y]])
         if self.pos[0][0] is None:

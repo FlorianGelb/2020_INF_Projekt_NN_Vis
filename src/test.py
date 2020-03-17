@@ -5,15 +5,12 @@ import src.MainWindow as MW
 class Test(MWG.Ui_MainWindow):
     tree_plot_item = None
 
-    def setupUi(self, MainWindow):
+    def setupUi(self, MainWindow, UI):
         super().setupUi(MainWindow)
-        self.M = MW.PlottingWidget(1, 1, [2,3,1])
-        self.tree_plot_item = self.M.tree_plot_item
         self.viewbox = self.widget.addViewBox(enableMenu=False)
+        self.M = MW.PlottingWidget(1, 1, [2, 3, 1], UI)
+        self.tree_plot_item = self.M.tree_plot_item
         self.viewbox.addItem(self.tree_plot_item)
-        self.viewbox.addItem(self.tree_plot_item)
-        self.M.T.update_graph()
-
 
 
 if __name__ == "__main__":
@@ -21,6 +18,6 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Test()
-    ui.setupUi(MainWindow)
+    ui.setupUi(MainWindow, ui)
     MainWindow.show()
     sys.exit(app.exec_())

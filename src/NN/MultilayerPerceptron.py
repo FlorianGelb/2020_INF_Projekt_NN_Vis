@@ -69,64 +69,7 @@ class Multilayerperceptron:
                     neuron1.add_output(c)
                     neuron2.set_input_cnts(c)
 
-    def pass_values(self, train_dict):
-        output_total = []
-        expected_output = []
 
-        for key in train_dict.keys():
-            for value in train_dict[key]:
-                '''
-                Distrubutes all input values to input nodes
-                '''
-                for n in range(len(self.neurons[0])):
-                    neuron = self.neurons[0][n]
-                    neuron.set_input(value[n])
-                    for connection in neuron.get_output_cnts():
-                        connection.set_input_value(value[n])
-
-                neuron_key_list = list(self.neurons.keys())[1:]
-
-                for neuron_key in neuron_key_list:
-                    if neuron_key == neuron_key_list[-1]:
-                        for output_neuron in self.neurons[neuron_key]:
-                            output_neuron.fetch_input()
-                            for output in output_neuron.input:
-                                output_total.append(output)
-                                expected_output.append(key)
-                        break
-
-                    else:
-                        for neuron in self.neurons[neuron_key]:
-                            neuron.fetch_input()
-                            for output_connections in neuron.get_output_cnts():
-                                output_connections.set_input_value(neuron.generate_output())
-        return output_total, expected_output
-
-    def calculate_total_error(self, output, expected_output):
-        total_output_error = []
-        for (o, k) in zip(output, expected_output):
-            total_output_error.append(o - k)
-        return total_output_error
-
-    def back_propagation(self, total_error, output):
-        key_list = list(self.neurons.keys())
-        key_list.reverse()
-        for key in key_list:
-            for (o, e) in zip(output, total_error):
-                for neuron in self.neurons[key]:
-                    if key == key_list[0]:
-                        print(neuron.activation_function_derivatives(neuron.scalar_product()) * e)
-                        neuron.e = neuron.activation_function_derivatives(neuron.scalar_product()) * e
-
-                    for input in neuron.get_input_cnts():
-                        neuron2 = input.get_input_neuron()
-                        neuron2.e += neuron.e * input.get_weight() * neuron2.activation_function_derivatives(neuron2.scalar_product())
-
-    def train(self, train_dict, alpha):
-        output, expceted_output = self.pass_values(train_dict)
-        total_error = self.calculate_total_error(output, expceted_output)
-        self.back_propagation(total_error, output)
-        quadratic_error = 0.5 * (sum(total_error) **2)
 
 
 
