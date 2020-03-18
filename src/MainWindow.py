@@ -11,7 +11,14 @@ class PlottingWidget(mlp.Multilayerperceptron):
         self.T = TP()
         self.tree_plot_item = self.T.tree_plot_item
         self.UI = UI
-        self.UI.pushButton.clicked.connect(lambda: self.train({1:[(1,1)]}, 0.1))
+        self.train({1:[(1,1)]}, 1)
+        self.train({1:[(1,0)]}, 1)
+        self.train({1:[(0,1)]}, 1)
+        self.train({0:[(0,0)]}, 1)
+        self.test()
+
+        #self.UI.pushButton.clicked.connect(lambda:  self.train({1: [(1, 1), (1,0), (0,1)],0:[(0,0)]}, 0.1))
+
 
     def pass_values(self, train_dict):
         output_total = []
@@ -19,11 +26,13 @@ class PlottingWidget(mlp.Multilayerperceptron):
 
         for key in train_dict.keys():
             for value in train_dict[key]:
+
                 '''
                 Distrubutes all input values to input nodes
                 '''
                 for n in range(len(self.neurons[0])):
                     neuron = self.neurons[0][n]
+                    neuron.clear_input()
                     neuron.set_input(value[n])
                     for connection in neuron.get_output_cnts():
                         connection.set_input_value(value[n])
@@ -42,8 +51,10 @@ class PlottingWidget(mlp.Multilayerperceptron):
                     else:
                         for neuron in self.neurons[neuron_key]:
                             neuron.fetch_input()
+
                             for output_connections in neuron.get_output_cnts():
                                 output_connections.set_input_value(neuron.generate_output())
+
         return output_total, expected_output
 
     def calculate_total_error(self, output, expected_output):
@@ -61,19 +72,26 @@ class PlottingWidget(mlp.Multilayerperceptron):
                 for neuron in self.neurons[key]:
                     if key == key_list[0]:
                         neuron.e = neuron.activation_function_derivatives(neuron.scalar_product()) * e
-                        self.update()
+                       # self.update()
 
                     for input in neuron.get_input_cnts():
                         neuron2 = input.get_input_neuron()
                         neuron2.e += neuron.e * input.get_weight() * neuron2.activation_function_derivatives(
                             neuron2.scalar_product())
-                        self.update()
+                        #self.update()
 
     def train(self, train_dict, alpha):
         output, expceted_output = self.pass_values(train_dict)
         total_error = self.calculate_total_error(output, expceted_output)
         self.back_propagation(total_error, output)
         quadratic_error = 0.5 * (sum(total_error) ** 2)
+        #self.update()
+
+    def test(self):
+        self.t = 0
+        while True:
+            self.t += 1
+            self.update()
 
     def update(self):
         self.UI.viewbox.removeItem(self.tree_plot_item)
@@ -96,7 +114,7 @@ class PlottingWidget(mlp.Multilayerperceptron):
                 else:
                     self.T.set_symbol('o')
                     self.T.set_node_size(1)
-                    self.T.set_text(str(neuron.e))
+                    self.T.set_text(str(self.t))
 
         for key in list(self.neurons.keys()):
             for neuron in self.neurons[key]:
