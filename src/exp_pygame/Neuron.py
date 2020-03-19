@@ -12,7 +12,6 @@ class Neuron():
         self.y = y
         self.text = text
         self.c = c
-        self.image = pygame.image.load("Images/Circle.png")
 
     def draw(self, win):
         pygame.draw.circle(win, self.c, (self.x, self.y), 20)
