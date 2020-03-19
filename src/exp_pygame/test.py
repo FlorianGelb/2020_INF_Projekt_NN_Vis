@@ -9,7 +9,8 @@ class Visualizer(MLP.Multilayerperceptron):
     def __init__(self, n, eta, layers, height, width):
         MLP.Multilayerperceptron.__init__(self, n, eta, layers)
         pygame.init()
-        self.clock = pygame.time.Clock()
+        self.total_error = [0]
+        self.eta = eta
         self.height = height
         self.width = width
         self.win = pygame.display.set_mode((self.width, self.height), pygame.RESIZABLE)
@@ -19,6 +20,7 @@ class Visualizer(MLP.Multilayerperceptron):
 
     def update_loop(self):
         window = True
+        started = False
         while window:
             for event in pygame.event.get():
                 mx, my = pygame.mouse.get_pos()
@@ -32,7 +34,13 @@ class Visualizer(MLP.Multilayerperceptron):
                     self.height = event.h
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if mx > self.button.get_x() and mx < self.button.get_colliding_x() and my > self.button.get_y() and my < self.button.get_colliding_y():
+                        started = True
                         self.train({1: [(1, 1), (1, 0), (0, 1)], 0: [(0, 0)]}, 1)
+
+
+            if started:
+                if 0.5 * (sum(self.total_error) ** 2) > self.alpha:
+                    self.train({1: [(1, 1), (1, 0), (0, 1)], 0: [(0, 0)]}, 1)
 
             self.update_nn()
 
@@ -43,6 +51,10 @@ class Visualizer(MLP.Multilayerperceptron):
     def create_UI(self):
         self.button = Button.Button((10, 25), "text", (200,20), (255,0,0))
         self.button.draw(self.win)
+
+        font = pygame.font.SysFont("Arial", 15)
+        text = font.render(str(0.5 * (sum(self.total_error) ** 2)), True, (255, 255, 255))
+        self.win.blit(text, (100, 100))
 
 
     def create_nn(self):
@@ -56,7 +68,7 @@ class Visualizer(MLP.Multilayerperceptron):
                     pos = (len(self.neurons[key]) / 2) * x_off
                     x = int((self.width / 2) + (key * x_off))
                     y = int((self.height / 2) + (pos - index * y_off))
-                    self.viz_neurons.append(Neuron.Neuron(x, y, str(neuron.input), (255, 0, 0)))
+                    self.viz_neurons.append(Neuron.Neuron(x, y, str(neuron.e), (255, 0, 0)))
 
             for key in list(self.neurons.keys()):
                 for neuron in self.neurons[key]:
@@ -103,7 +115,6 @@ class Visualizer(MLP.Multilayerperceptron):
                     for connection in neuron.get_output_cnts():
                         connection.set_input_value(value[n])
 
-                    self.update_nn()
                 neuron_key_list = list(self.neurons.keys())[1:]
 
                 for neuron_key in neuron_key_list:
@@ -121,7 +132,7 @@ class Visualizer(MLP.Multilayerperceptron):
 
                             for output_connections in neuron.get_output_cnts():
                                 output_connections.set_input_value(neuron.generate_output())
-                self.update_nn()
+
 
         return output_total, expected_output
 
@@ -140,20 +151,33 @@ class Visualizer(MLP.Multilayerperceptron):
                 for neuron in self.neurons[key]:
                     if key == key_list[0]:
                         neuron.e = neuron.activation_function_derivatives(neuron.scalar_product()) * e
+                        self.update_nn()
 
                     for input in neuron.get_input_cnts():
                         neuron2 = input.get_input_neuron()
                         neuron2.e += neuron.e * input.get_weight() * neuron2.activation_function_derivatives(
                             neuron2.scalar_product())
+                        self.update_nn()
+
+    def update_weights(self):
+        for key in list(self.neurons.keys()):
+            for neuron in self.neurons[key]:
+                for cnt in neuron.get_input_cnts():
+                    inp = cnt.get_input_neuron().generate_output()
+                    cnt.update_weight(neuron.e * -self.eta * inp)
+
 
     def train(self, train_dict, alpha):
-        output, expceted_output = self.pass_values(train_dict)
-        total_error = self.calculate_total_error(output, expceted_output)
-        self.back_propagation(total_error, output)
-        quadratic_error = 0.5 * (sum(total_error) ** 2)
+        self.alpha = alpha
+        self.output, self.expceted_output = self.pass_values(train_dict)
+        self.total_error = self.calculate_total_error(self.output, self.expceted_output)
+        self.back_propagation(self.total_error, self.output)
+        self.quadratic_error = 0.5 * (sum(self.total_error) ** 2)
+        self.update_weights()
 
 
 
 
 
-v = Visualizer(1,1,[2,3,1], 600, 800)
+
+v = Visualizer(1,0.00001,[2,3,1], 600, 800)

@@ -17,7 +17,6 @@ class Connector:
         self.dbg_dw_array = []
 
     def update_weight(self, d_w):
-        #print(d_w)
         self.dbg_dw_array.append(d_w)
         self.set_weight(self.weight + d_w)
 
