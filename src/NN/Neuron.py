@@ -95,7 +95,7 @@ class Neuron:
     def scalar_product(self):
         sum = 0
         for input in self.input:
-            sum += input #Wird im Connectorobjekt bereits mit Gewicht multipliziert
+            sum += input
         return sum
 
     def activation_function(self, x):

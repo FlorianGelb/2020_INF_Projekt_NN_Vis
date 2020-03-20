@@ -1,6 +1,7 @@
 import src.NN.Neuron as Neuron
 import src.NN.Connector as Connector
 
+
 class Multilayerperceptron:
     def __init__(self, n_inputs, eta, shape):
         self.neurons = {}
@@ -11,7 +12,6 @@ class Multilayerperceptron:
 
         for n in range(len(shape))[1:-2]:
             self.shape[n] += 1
-
 
         for i in range(len(shape)):
             for j in range(shape[i]):
