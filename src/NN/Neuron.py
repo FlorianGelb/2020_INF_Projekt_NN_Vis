@@ -1,5 +1,6 @@
 import math
-import src.NN.Connector as conn
+
+
 class Neuron:
 
     threshold = 0
@@ -68,9 +69,6 @@ class Neuron:
             self.e += error_mom
             return self.e
 
-    def update_bias(self, b):
-        self.set_bias(self.bias + b)
-
     def clear_input(self):
         self.input = []
 
@@ -97,7 +95,7 @@ class Neuron:
     def scalar_product(self):
         sum = 0
         for input in self.input:
-            sum += input + self.bias #Wird im Connectorobjekt bereits mit Gewicht multipliziert
+            sum += input #Wird im Connectorobjekt bereits mit Gewicht multipliziert
         return sum
 
     def activation_function(self, x):
@@ -171,10 +169,12 @@ class Neuron:
 
     def generate_output(self, dbg=False):
         new_output = self.activation_function(self.scalar_product())
+        if self.bias:
+            return 1
         if dbg:
             print(self.input)
         if new_output > self.threshold:
-            self.output = new_output + self.bias
+            self.output = new_output
             if self.add_step and self.output > 0:
                 return 1
             elif self.add_step and self.output<=0:

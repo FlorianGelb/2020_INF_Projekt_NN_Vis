@@ -3,19 +3,25 @@ import src.NN.MultilayerPerceptron as MLP
 import src.exp_pygame.Neuron as Neuron
 import src.exp_pygame.Connector as Connector
 import src.exp_pygame.Button as Button
+import src.exp_pygame.InputTerminal as Terminal
 
 
 class Visualizer(MLP.Multilayerperceptron):
-    def __init__(self, n, eta, layers, height, width):
+    def __init__(self, n, eta, gamma, layers, height, width):
         MLP.Multilayerperceptron.__init__(self, n, eta, layers)
         pygame.init()
         self.total_error = [0]
+        self.alpha = 0.01
+        self.ef = "MAE"
+        self.train_dict = {0:[(0,0), (0,1) ,(1, 0)], 1:[(1,1)]}
         self.eta = eta
+        self.gamma = gamma
         self.height = height
         self.width = width
-        self.win = pygame.display.set_mode((self.width, self.height), pygame.RESIZABLE)
+        self.win = pygame.display.set_mode((self.width, self.height), pygame.RESIZABLE, pygame.RESIZABLE or pygame.NOFRAME)
         self.viz_neurons = []
         self.connections = []
+        self.update_nn()
         self.update_loop()
 
     def update_loop(self):
@@ -32,43 +38,56 @@ class Visualizer(MLP.Multilayerperceptron):
                 if event.type == pygame.VIDEORESIZE:
                     self.width = event.w
                     self.height = event.h
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if mx > self.button.get_x() and mx < self.button.get_colliding_x() and my > self.button.get_y() and my < self.button.get_colliding_y():
                         started = True
-                        self.train({1: [(1, 1), (1, 0), (0, 1)], 0: [(0, 0)]}, 1)
-
+                        for key in list(self.train_dict.keys()):
+                            for val in self.train_dict[key]:
+                                self.train(val, key, self.eta)
 
             if started:
-                if 0.5 * (sum(self.total_error) ** 2) > self.alpha:
-                    self.train({1: [(1, 1), (1, 0), (0, 1)], 0: [(0, 0)]}, 1)
+                if self.error_function(self.total_error) > self.alpha:
+                    self.total_error = [0]
+                    for key in list(self.train_dict.keys()):
+                        for val in self.train_dict[key]:
+                            self.train(val, key, self.alpha)
+
+                            #self.update_nn()
 
             self.update_nn()
 
-    def create(self):
+
+    def create(self, UI = True):
         self.create_nn()
-        self.create_UI()
+        if UI:
+            self.create_UI()
 
     def create_UI(self):
         self.button = Button.Button((10, 25), "text", (200,20), (255,0,0))
         self.button.draw(self.win)
 
         font = pygame.font.SysFont("Arial", 15)
-        text = font.render(str(0.5 * (sum(self.total_error) ** 2)), True, (255, 255, 255))
+        text = font.render(str(self.error_function(self.total_error)), True, (255, 255, 255))
         self.win.blit(text, (100, 100))
 
 
     def create_nn(self):
-        x_off = 100
-        y_off = 100
+        x_off = 300
+        y_off = 300
 
-        if True:# len(self.viz_neurons) == 0:# and len(self.connections) == 0:
+        if len(self.viz_neurons) == 0 and len(self.connections) == 0:
             for key in list(self.neurons.keys()):
                 for neuron in self.neurons[key]:
                     index = self.neurons[key].index(neuron)
                     pos = (len(self.neurons[key]) / 2) * x_off
-                    x = int((self.width / 2) + (key * x_off))
-                    y = int((self.height / 2) + (pos - index * y_off))
-                    self.viz_neurons.append(Neuron.Neuron(x, y, str(neuron.e), (255, 0, 0)))
+                    x = int((key * x_off) + (self.width / 2) - self.width / 3)
+                    y = int((pos - index * y_off) + (self.height / 2))
+
+                    if key == list(self.neurons.keys())[-1] or key == list(self.neurons.keys())[0]:
+                        self.viz_neurons.append(Terminal.InputTerminal(x,y, str(neuron.output),(255, 0, 0), 20, 20))
+                    else:
+                        self.viz_neurons.append(Neuron.Neuron(x, y, str(neuron.output), (255, 0, 0)))
 
             for key in list(self.neurons.keys()):
                 for neuron in self.neurons[key]:
@@ -89,95 +108,115 @@ class Visualizer(MLP.Multilayerperceptron):
             c.draw(self.win)
 
     def update_nn(self):
-        self.win = pygame.display.set_mode((self.width, self.height), pygame.RESIZABLE)
+        self.win = pygame.display.set_mode((self.width, self.height), pygame.RESIZABLE or pygame.NOFRAME)
         self.viz_neurons = []
         Neuron.Neuron.id = 0
         self.connections = []
         self.create()
         self.draw()
-
         pygame.display.update()
 
-    def pass_values(self, train_dict):
+
+
+    def pass_values(self, key, value):
         output_total = []
         expected_output = []
+        '''
+        Distrubutes all input values to input nodes
+        '''
+        for n in range(len(self.neurons[0])):
+            neuron = self.neurons[0][n]
+            neuron.clear_input()
+            neuron.set_input(value)
+            for connection in neuron.get_output_cnts():
+                connection.set_input_value(value)
 
-        for key in train_dict.keys():
-            for value in train_dict[key]:
+        neuron_key_list = list(self.neurons.keys())[1:]
 
-                '''
-                Distrubutes all input values to input nodes
-                '''
-                for n in range(len(self.neurons[0])):
-                    neuron = self.neurons[0][n]
-                    neuron.clear_input()
-                    neuron.set_input(value[n])
-                    for connection in neuron.get_output_cnts():
-                        connection.set_input_value(value[n])
+        for neuron_key in neuron_key_list:
+            if neuron_key == neuron_key_list[-1]:
+                for output_neuron in self.neurons[neuron_key]:
+                    output_neuron.fetch_input()
+                    for output in output_neuron.input:
+                        output_total.append(output)
+                        expected_output.append(key)
+                break
 
-                neuron_key_list = list(self.neurons.keys())[1:]
+            else:
+                for neuron in self.neurons[neuron_key]:
+                    neuron.fetch_input()
+                    for output_connections in neuron.get_output_cnts():
+                        output_connections.set_input_value(neuron.generate_output())
 
-                for neuron_key in neuron_key_list:
-                    if neuron_key == neuron_key_list[-1]:
-                        for output_neuron in self.neurons[neuron_key]:
-                            output_neuron.fetch_input()
-                            for output in output_neuron.input:
-                                output_total.append(output)
-                                expected_output.append(key)
-                        break
-
-                    else:
-                        for neuron in self.neurons[neuron_key]:
-                            neuron.fetch_input()
-
-                            for output_connections in neuron.get_output_cnts():
-                                output_connections.set_input_value(neuron.generate_output())
-
-
-        return output_total, expected_output
+        return output
 
     def calculate_total_error(self, output, expected_output):
-        total_output_error = []
-        for (o, k) in zip(output, expected_output):
-            total_output_error.append(o - k)
-        return total_output_error
+        return output - expected_output
 
 
-    def back_propagation(self, total_error, output):
+    def back_propagation(self, total_error):
         key_list = list(self.neurons.keys())
         key_list.reverse()
-        for (o, e) in zip(output, total_error):
-            for key in key_list:
-                for neuron in self.neurons[key]:
-                    if key == key_list[0]:
-                        neuron.e = neuron.activation_function_derivatives(neuron.scalar_product()) * e
-                        self.update_nn()
+        for key in key_list:
+            for neuron in self.neurons[key]:
+                if key == key_list[0]:
+                    neuron.e = neuron.activation_function_derivatives(neuron.scalar_product()) * total_error
 
-                    for input in neuron.get_input_cnts():
-                        neuron2 = input.get_input_neuron()
-                        neuron2.e += neuron.e * input.get_weight() * neuron2.activation_function_derivatives(
-                            neuron2.scalar_product())
-                        self.update_nn()
+                for input in neuron.get_input_cnts():
+                    neuron2 = input.get_input_neuron()
+                    neuron2.e += neuron.e * input.get_weight() * neuron2.activation_function_derivatives(
+                        neuron2.scalar_product())
+
+    def update_bias(self):
+        for key in list(self.neurons.keys()):
+            for neuron in self.neurons[key]:
+                print(neuron.get_bias() - neuron.e)
 
     def update_weights(self):
         for key in list(self.neurons.keys()):
             for neuron in self.neurons[key]:
                 for cnt in neuron.get_input_cnts():
                     inp = cnt.get_input_neuron().generate_output()
-                    cnt.update_weight(neuron.e * -self.eta * inp)
+                    cnt.update_weight(-neuron.e * self.eta * inp)
 
 
-    def train(self, train_dict, alpha):
-        self.alpha = alpha
-        self.output, self.expceted_output = self.pass_values(train_dict)
-        self.total_error = self.calculate_total_error(self.output, self.expceted_output)
-        self.back_propagation(self.total_error, self.output)
-        self.quadratic_error = 0.5 * (sum(self.total_error) ** 2)
+    def error_function(self, total_error):
+        if self.ef == "MSE":
+            return self.MSE(total_error)
+        if self.ef == "MAE":
+            return self.MAE(total_error)
+        if self.ef == "RMSE":
+            return self.RMSE(total_error)
+
+
+    def clear_e(self):
+        for key in list(self.neurons.keys()):
+            for neuron in self.neurons[key]:
+                neuron.e = 0
+
+
+    def MSE(self, total_error):
+        return (1/len(self.train_dict.values())) * (sum(total_error) ** 2)
+
+    def RMSE(self, total_error):
+        return self.MSE(total_error) ** 0.5
+
+    def MAE(self, total_error):
+        return (1/len(self.train_dict.values()) * (sum([abs(e) for e in total_error])))
+
+
+    def train(self, inp, expected, eta):
+        self.output = self.pass_values(inp, expected)
+        total_error = self.calculate_total_error(self.output, expected)
+        self.total_error.append(total_error)
+        self.back_propagation(total_error)
+        #self.update_bias()
         self.update_weights()
+        #self.clear_e()
 
 
 
 
 
 
-v = Visualizer(1,0.00001,[2,3,1], 600, 800)
+v = Visualizer(2,0.00000000000000001, 0.00000000000001,[1,1,1], 600, 800)
