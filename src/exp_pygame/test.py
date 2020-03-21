@@ -35,20 +35,6 @@ class Visualizer(MLP.Multilayerperceptron):
             key = list(self.train_dict.keys())[key_index]
             val = self.train_dict[key][value_index]
 
-            if value_index < len(self.train_dict[key_index]):
-                value_index += 1
-            else:
-                value_index = 0
-
-            if key_index < len(list(self.train_dict.keys())):
-                if value_index > len(self.train_dict[key_index]) -1:
-                    key_index += 1
-                    value_index = 0
-                else:
-                    pass
-            else:
-                key_index = 0
-
             for event in pygame.event.get():
                 mx, my = pygame.mouse.get_pos()
 
@@ -66,20 +52,37 @@ class Visualizer(MLP.Multilayerperceptron):
                         self.train(val, key)
                         self.update_nn()
             if started:
-                    self.total_error = [0]
+
                     self.train(val, key)
 
-                    if self.error_function(self.total_error) <= self.alpha:
-                        started = False
+
+
+            if self.error_function(self.total_error) <= self.alpha:
+                if value_index < len(self.train_dict[key_index]):
+                    value_index += 1
+                else:
+                    value_index = 0
+
+                if key_index < len(list(self.train_dict.keys())):
+                    if value_index > len(self.train_dict[key_index]) - 1:
+                        key_index += 1
+                        value_index = 0
+                    else:
+                        pass
+                else:
+                    key_index = 0
+
 
             self.update_nn()
+            self.total_error = [0]
+
 
     def create(self):
         self.create_nn()
         self.create_UI()
 
     def create_UI(self):
-        self.button = Button.Button((10, 25), "text", (200,20), (255,0,0))
+        self.button = Button.Button((10, 25), "Start", (200,20), (255,0,0))
         self.button.draw(self.win)
 
         font = pygame.font.SysFont("Arial", 15)
@@ -188,12 +191,16 @@ class Visualizer(MLP.Multilayerperceptron):
                     cnt.update_weight(-neuron.e * self.eta * inp)
 
     def error_function(self, total_error):
-        if self.ef == "MSE":
-            return self.MSE(total_error)
-        if self.ef == "MAE":
-            return self.MAE(total_error)
-        if self.ef == "RMSE":
-            return self.RMSE(total_error)
+        try:
+            total_error = total_error[1:]
+            if self.ef == "MSE":
+                return self.MSE(total_error)
+            if self.ef == "MAE":
+                return self.MAE(total_error)
+            if self.ef == "RMSE":
+                return self.RMSE(total_error)
+        except ZeroDivisionError:
+            return 0
 
     def clear_e(self):
         for key in list(self.neurons.keys()):
@@ -201,18 +208,16 @@ class Visualizer(MLP.Multilayerperceptron):
                 neuron.e = 0
 
     def MSE(self, total_error):
-        return (1/len(self.train_dict.values())) * (sum(total_error) ** 2)
+        return (1/len(total_error) * (sum(total_error) ** 2))
 
     def RMSE(self, total_error):
         return self.MSE(total_error) ** 0.5
 
     def MAE(self, total_error):
-        return (1/len(self.train_dict.values()) * (sum([abs(e) for e in total_error])))
+        return (1/len(total_error) * (sum([abs(e) for e in total_error])))
 
     def train(self, inp, expected):
         self.output = self.pass_values(expected, inp)
-       # print(self.output, inp, expected)
-
         total_error = self.calculate_total_error(self.output, expected)
         self.total_error.append(total_error)
         self.back_propagation(total_error)
@@ -220,4 +225,4 @@ class Visualizer(MLP.Multilayerperceptron):
         self.clear_e()
 
 
-v = Visualizer(2, 0.9,[1], 600, 800)
+v = Visualizer(1, 0.01,[2,3,1], 600, 800)

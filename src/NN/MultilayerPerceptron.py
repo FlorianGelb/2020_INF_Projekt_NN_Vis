@@ -62,7 +62,7 @@ class Multilayerperceptron:
                     if key_prime == 0:
                         break
 
-                    if key_prime == 1:# and i != len(self.neurons[key_prime]) - 1:
+                    if key_prime == 1 and i != len(self.neurons[key_prime]) - 1:
                         if len(neuron1.get_input_cnts()) < n_inputs:
                             for h in range(n_inputs * i, (n_inputs * i + n_inputs)):
                                 connector = Connector.Connector(self.neurons[0][h], neuron1)
