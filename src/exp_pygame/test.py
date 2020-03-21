@@ -82,10 +82,14 @@ class Visualizer(MLP.Multilayerperceptron):
                     x = int((key * x_off) + (self.width / 2) - self.width / 3)
                     y = int((pos - index * y_off) + (self.height / 2))
 
+                    c = (255, 0, 0)
+                    if neuron.bias:
+                        c = (155, 0, 255)
+
                     if key == list(self.neurons.keys())[-1] or key == list(self.neurons.keys())[0]:
-                        self.viz_neurons.append(Terminal.InputTerminal(x,y, str(neuron.input),(255, 0, 0), 20, 20))
+                        self.viz_neurons.append(Terminal.InputTerminal(x,y, str(neuron.input),c, 20, 20))
                     else:
-                        self.viz_neurons.append(Neuron.Neuron(x, y, str(neuron.output), (255, 0, 0)))
+                        self.viz_neurons.append(Neuron.Neuron(x, y, str(neuron.output), c))
 
             for key in list(self.neurons.keys()):
                 for neuron in self.neurons[key]:
@@ -189,7 +193,6 @@ class Visualizer(MLP.Multilayerperceptron):
 
     def MAE(self, total_error):
         return (1/len(self.train_dict.values()) * (sum([abs(e) for e in total_error])))
-
 
     def train(self, inp, expected):
         self.output = self.pass_values(expected, inp)
