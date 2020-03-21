@@ -3,7 +3,7 @@ import src.exp_pygame.Neuron as Neuron
 
 class InputTerminal(Neuron.Neuron):
     def __init__(self, x ,y , text, color, size_x, size_y):
-        Neuron.Neuron.__init__(self, x, y, text, color)
+        Neuron.Neuron.__init__(self, x, y, text, color, 0)
         self.size_x = size_x
         self.size_y = size_y
 

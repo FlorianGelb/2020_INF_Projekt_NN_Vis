@@ -11,7 +11,9 @@ class Visualizer(MLP.Multilayerperceptron):
         MLP.Multilayerperceptron.__init__(self, n, eta, layers)
         pygame.init()
         self.total_error = [0]
-        self.alpha = 0.01
+        self.alpha = 0.
+        self.s = 20
+        self.off = 0
         self.ef = "MAE"
         self.train_dict = {1:[(0,1) ,(1, 0), (1,1)], 0:[(0,0)]}
         self.eta = eta
@@ -78,6 +80,7 @@ class Visualizer(MLP.Multilayerperceptron):
 
 
     def create(self):
+        self.get_size()
         self.create_nn()
         self.create_UI()
 
@@ -89,26 +92,45 @@ class Visualizer(MLP.Multilayerperceptron):
         text = font.render(str(self.error_function(self.total_error)), True, (255, 255, 255))
         self.win.blit(text, (100, 100))
 
+    def get_size(self):
+        l,m = self.get_layer_max()
+        off = (self.width / (1.06 * (len(list(self.neurons.keys())) - 1)))
+        off_2 = (self.height / (m * 0.06 + (l -1)))
+
+        if off > off_2:
+            self.off = off_2
+            self.s = int(self.off * 0.06)
+        else:
+            self.off = off
+            self.s = int(self.off * 0.06)
+
+    def get_layer_max(self):
+        ln = 0
+        for key in list(self.neurons.keys()):
+            l = len(self.neurons[key])
+            if l > ln:
+                ln = l
+
+        return ln, key
+
     def create_nn(self):
-        x_off = 300
-        y_off = 300
 
         if len(self.viz_neurons) == 0 and len(self.connections) == 0:
             for key in list(self.neurons.keys()):
                 for neuron in self.neurons[key]:
                     index = self.neurons[key].index(neuron)
-                    pos = (len(self.neurons[key]) / 2) * x_off
-                    x = int((key * x_off) + (self.width / 2) - self.width / 3)
-                    y = int((pos - index * y_off) + (self.height / 2))
+                    pos = (len(self.neurons[key]) / 2) * self.off
+                    x = int((key * self.off) + (self.width / 2) - self.width / 3)
+                    y = int((pos - index * self.off) + (self.height / 2))
 
                     c = (255, 0, 0)
                     if neuron.bias:
                         c = (155, 0, 255)
 
                     if key == list(self.neurons.keys())[-1] or key == list(self.neurons.keys())[0]:
-                        self.viz_neurons.append(Terminal.InputTerminal(x,y, str(neuron.input),c, 20, 20))
+                        self.viz_neurons.append(Terminal.InputTerminal(x,y, str(neuron.input),c, self.s, self.s))
                     else:
-                        self.viz_neurons.append(Neuron.Neuron(x, y, str(neuron.output), c))
+                        self.viz_neurons.append(Neuron.Neuron(x, y, str(neuron.output), c, self.s))
 
             for key in list(self.neurons.keys()):
                 for neuron in self.neurons[key]:
