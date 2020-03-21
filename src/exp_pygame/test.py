@@ -11,7 +11,9 @@ class Visualizer(MLP.Multilayerperceptron):
         MLP.Multilayerperceptron.__init__(self, n, eta, layers)
         pygame.init()
         self.total_error = [0]
-        self.alpha = 0.
+        self.alpha = 0.01
+        self.a =  0
+        self.b = 0
         self.s = 20
         self.off = 0
         self.ef = "MAE"
@@ -96,6 +98,10 @@ class Visualizer(MLP.Multilayerperceptron):
         l,m = self.get_layer_max()
         off = (self.width / (1.06 * (len(list(self.neurons.keys())) - 1)))
         off_2 = (self.height / (m * 0.06 + (l -1)))
+        self.b = ((l * self.s) + ((l - 2) * off)) / 2
+        self.a = ((len(list(self.neurons.keys())) * self.s) + ((len(list(self.neurons.keys())) - 1) * off)) / 2
+
+        print(self.a, self.b)
 
         if off > off_2:
             self.off = off_2
@@ -120,8 +126,8 @@ class Visualizer(MLP.Multilayerperceptron):
                 for neuron in self.neurons[key]:
                     index = self.neurons[key].index(neuron)
                     pos = (len(self.neurons[key]) / 2) * self.off
-                    x = int((key * self.off) + (self.width / 2) - self.width / 3)
-                    y = int((pos - index * self.off) + (self.height / 2))
+                    x = int((key * self.off) + (self.width / 2) - self.a)
+                    y = int((pos - index * self.off) + (self.height  / 2) - self.b / 2)
 
                     c = (255, 0, 0)
                     if neuron.bias:
