@@ -1,6 +1,8 @@
 import pygame
+import src.exp_pygame.ChildObject as ChildObject
 
-class Connector:
+
+class Connector(ChildObject.ChildObject):
 
     def __init__(self, start, end, c, text):
         self.start = start

@@ -1,18 +1,19 @@
 import pygame
+import src.exp_pygame.ChildObject as ChildObject
+import src.exp_pygame.Label as Label
 
 
-class Button:
+class Button(ChildObject.ChildObject):
     def __init__(self, pos,text,size, color):
         self.x, self.y = pos
         self.size_x, self.size_y = size
         self.text = text
         self.c = color
-
-    def draw(self, win):
-        pygame.draw.rect(win, self.c, (self.x, self.y, self.size_x, self.size_y))
-        font = pygame.font.SysFont("Arial", 15)
-        text = font.render(self.text, True, (255, 255, 255))
-        win.blit(text, (self.x, self.y))
+        self.rendered = [pygame.Surface(size)]
+        self.rendered[0].fill((color))
+        font = Label.Label("Arial", 15, self.x, self.y, self.text,  True, (255, 255, 255))
+        self.rendered.append(font.get_rendered()[0])
+        self.rendered[0].convert()
 
     def get_x(self):
         return self.x
@@ -25,3 +26,4 @@ class Button:
 
     def get_colliding_y(self):
         return self.y + self.size_y
+

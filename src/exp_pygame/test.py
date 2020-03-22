@@ -4,6 +4,8 @@ import src.exp_pygame.Neuron as Neuron
 import src.exp_pygame.Connector as Connector
 import src.exp_pygame.Button as Button
 import src.exp_pygame.InputTerminal as Terminal
+import src.exp_pygame.Pane as Pane
+import src.exp_pygame.Label as Label
 
 
 class Visualizer(MLP.Multilayerperceptron):
@@ -15,7 +17,8 @@ class Visualizer(MLP.Multilayerperceptron):
         self.a =  0
         self.b = 0
         self.s = 20
-        self.off = 0
+        self.x_off = 0
+        self.y_off = 0
         self.ef = "MAE"
         self.train_dict = {1:[(0,1) ,(1, 0), (1,1)], 0:[(0,0)]}
         self.eta = eta
@@ -24,6 +27,7 @@ class Visualizer(MLP.Multilayerperceptron):
         self.win = pygame.display.set_mode((self.width, self.height), pygame.RESIZABLE, pygame.RESIZABLE or pygame.NOFRAME)
         self.viz_neurons = []
         self.connections = []
+        self.pane = Pane.Pane(self.win)
         self.update_nn()
         self.update_loop()
 
@@ -87,28 +91,27 @@ class Visualizer(MLP.Multilayerperceptron):
         self.create_UI()
 
     def create_UI(self):
-        self.button = Button.Button((10, 25), "Start", (200,20), (255,0,0))
-        self.button.draw(self.win)
+        self.button = Button.Button((150, 150), "Start", (200,20), (255,0,0))
+        self.pane.add_child(self.button)
 
-        font = pygame.font.SysFont("Arial", 15)
-        text = font.render(str(self.error_function(self.total_error)), True, (255, 255, 255))
-        self.win.blit(text, (100, 100))
+        font = Label.Label("Arial", 15, 100, 100, str(self.error_function(self.total_error)), True, (255, 255, 255))
+        self.pane.add_child(font)
+        self.pane.draw()
 
     def get_size(self):
         l,m = self.get_layer_max()
         off = (self.width / (1.06 * (len(list(self.neurons.keys())) - 1)))
         off_2 = (self.height / (m * 0.06 + (l -1)))
         self.b = ((l * self.s) + ((l - 2) * off)) / 2
-        self.a = ((len(list(self.neurons.keys())) * self.s) + ((len(list(self.neurons.keys())) - 1) * off)) / 2
+        self.a = ((len(list(self.neurons.keys())) * self.s) + ((len(list(self.neurons.keys())) - 1) * off))
 
-        print(self.a, self.b)
+        self.y_off = off_2
+        self.x_off = off
 
-        if off > off_2:
-            self.off = off_2
-            self.s = int(self.off * 0.06)
+        if self.x_off > self.y_off:
+            self.s = int(self.y_off * 0.06)
         else:
-            self.off = off
-            self.s = int(self.off * 0.06)
+            self.s = int(self.x_off * 0.06)
 
     def get_layer_max(self):
         ln = 0
@@ -125,18 +128,23 @@ class Visualizer(MLP.Multilayerperceptron):
             for key in list(self.neurons.keys()):
                 for neuron in self.neurons[key]:
                     index = self.neurons[key].index(neuron)
-                    pos = (len(self.neurons[key]) / 2) * self.off
-                    x = int((key * self.off) + (self.width / 2) - self.a)
-                    y = int((pos - index * self.off) + (self.height  / 2) - self.b / 2)
+                    pos = (len(self.neurons[key]) / 2) * self.x_off
+                    x = int((key * self.x_off) + (self.width / 2) - self.a / 2)
+                    y = int((pos - index * self.y_off) + (self.height  / 2) - self.b /3)
 
                     c = (255, 0, 0)
                     if neuron.bias:
                         c = (155, 0, 255)
 
-                    if key == list(self.neurons.keys())[-1] or key == list(self.neurons.keys())[0]:
-                        self.viz_neurons.append(Terminal.InputTerminal(x,y, str(neuron.input),c, self.s, self.s))
+                    #if key == list(self.neurons.keys())[-1] or key == list(self.neurons.keys())[0]:
+                       # T = Terminal.InputTerminal(x,y, str(neuron.input),c, self.s, self.s)
+                       # self.viz_neurons.append(T)
+                       # self.pane.add_child(T)
+
                     else:
-                        self.viz_neurons.append(Neuron.Neuron(x, y, str(neuron.output), c, self.s))
+                        N = Neuron.Neuron(x, y, str(neuron.output), c, self.s)
+                        self.viz_neurons.append(N)
+                        self.pane.add_child(N)
 
             for key in list(self.neurons.keys()):
                 for neuron in self.neurons[key]:
@@ -150,11 +158,13 @@ class Visualizer(MLP.Multilayerperceptron):
                             self.connections.append(Connector.Connector(start, end, (255, 0, 0), str(cnt.get_weight())))
 
     def draw(self):
-        for neuron in self.viz_neurons:
-            neuron.draw(self.win)
+      #  for neuron in self.viz_neurons:
+       #     neuron.draw(self.win)
 
         for c in self.connections:
             c.draw(self.win)
+
+        self.pane.draw()
 
     def update_nn(self):
         self.win = pygame.display.set_mode((self.width, self.height), pygame.RESIZABLE or pygame.NOFRAME)
