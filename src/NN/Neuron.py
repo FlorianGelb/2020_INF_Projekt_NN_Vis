@@ -107,8 +107,8 @@ class Neuron:
             return self.sinus(x)
         if self.activation_function_type == "TAN":
             return self.tan(x)
-        if self.activation_function_type == "LOG10":
-            return self.log_10(x)
+        if self.activation_function_type == "SIG":
+            return self.sig(x)
         if self.activation_function_type == "STEP":
             return self.step(x)
 
@@ -121,15 +121,17 @@ class Neuron:
             return self.der_sinus(x)
         if self.activation_function_type == "TAN":
             return self.der_tan(x)
-        if self.activation_function_type == "LOG10":
-            return self.der_log_10(x)
+        if self.activation_function_type == "SIG":
+            return self.der_sig(x)
+        if self.activation_function_type == "STEP":
+            return 1
     def step(self, x):
         if x > 0:
             return 1
         return 0
 
-    def log_10(self, x):
-        return math.log10(abs(x) + 1)
+    def sig(self, x):
+        return(1/(1 + (math.e**-x )))
 
     def tan(self, x):
         return math.tan(x)
@@ -164,8 +166,8 @@ class Neuron:
     def der_tan(self, x):
         return (1/(self.der_sinus(x)**2))
 
-    def der_log_10(self, x):
-        return 1/(abs(x) * math.log(10))
+    def der_sig(self, x):
+        return((math.e ** -x)/((1+math.e**-x)**2))
 
     def generate_output(self, dbg=False):
         new_output = self.activation_function(self.scalar_product())
@@ -177,7 +179,7 @@ class Neuron:
             self.output = new_output
             if self.add_step and self.output > 0:
                 return 1
-            elif self.add_step and self.output<=0:
+            elif self.add_step and self.output <= 0:
                 return 0
             return self.output
         else:

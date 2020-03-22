@@ -4,21 +4,23 @@ import src.exp_pygame.Neuron as Neuron
 import src.exp_pygame.Connector as Connector
 import src.exp_pygame.Button as Button
 import src.exp_pygame.InputTerminal as Terminal
+import src.exp_pygame.CheckBox as Checkbox
 import random
+
 
 class Visualizer(MLP.Multilayerperceptron):
     def __init__(self, n, eta, layers, height, width):
         MLP.Multilayerperceptron.__init__(self, n, eta, layers)
         pygame.init()
         self.total_error = []
-        self.alpha = 0.1
+        self.alpha = 0.0001
         self.a =  0
         self.b = 0
         self.s = 20
         self.off = 0
         self.off = 0
         self.digit = 4
-        self.ef = "RMSE"
+        self.ef = "MAE"
         self.train_dict = {1:[(0,1) ,(1, 0), (1,1)], 0:[(0,0)]}
         self.eta = eta
         self.height = height
@@ -27,6 +29,8 @@ class Visualizer(MLP.Multilayerperceptron):
         self.surface = pygame.Surface((self.width, self.height))
         self.viz_neurons = []
         self.connections = []
+        self.checkboxes = []
+        self.create_UI()
         self.update_nn()
         self.update_loop()
 
@@ -45,6 +49,19 @@ class Visualizer(MLP.Multilayerperceptron):
             key = list(self.train_dict.keys())[key_index]
             val = self.train_dict[key][value_index]
 
+            if value_index < len(self.train_dict[key_index]):
+                value_index += 1
+            else:
+                value_index = 0
+
+            if key_index < len(list(self.train_dict.keys())):
+                if value_index > len(self.train_dict[key_index]) - 1:
+                    key_index += 1
+                    value_index = 0
+                else:
+                    pass
+            else:
+                key_index = 0
 
             for event in pygame.event.get():
                 mx, my = pygame.mouse.get_pos()
@@ -63,44 +80,62 @@ class Visualizer(MLP.Multilayerperceptron):
                         started = True
                         self.train(val, key)
                         self.update_nn()
+
+                    for checkbox in self.checkboxes:
+                        if mx > checkbox.get_x() and mx < checkbox.get_colliding_x() and my > checkbox.get_y() and my < checkbox.get_colliding_y():
+                            if checkbox.get_checked():
+                                checkbox.c = (0,255,0)
+                            else:
+                                checkbox.c = (255, 0, 0)
+                            checkbox.set_checked(not checkbox.get_checked())
+                            self.draw()
+                            self.surface.convert()
+
             if started:
 
                 self.train(val, key)
 
-                #if self.error_function(self.total_error) <= self.alpha:
-                if self.error_function([self.total_error[-1]]) <= self.alpha:
+                ##if self.error_function(self.total_error) <= self.alpha:
+               # if self.error_function([self.total_error[-1]]) <= self.alpha:
                     #key = random.choice(list(self.train_dict.keys()))
                     #val = random.choice(self.train_dict[key])
-                    if value_index < len(self.train_dict[key_index]):
-                        value_index += 1
-                    else:
-                        value_index = 0
 
-                    if key_index < len(list(self.train_dict.keys())):
-                        if value_index > len(self.train_dict[key_index]) - 1:
-                            key_index += 1
-                            value_index = 0
-                        else:
-                            pass
-                    else:
-                        key_index = 0
 
-                    if key == list(self.train_dict.keys())[-1] and val == self.train_dict[list(self.train_dict.keys())[-1]][-1]:
-                        if self.error_function(self.total_error) < self.alpha:
-                            started = False
-                            print(self.total_error)
-                        #self.total_error = []
+                if key == list(self.train_dict.keys())[-1] and val == self.train_dict[list(self.train_dict.keys())[-1]][-1]:
+                    if self.error_function(self.total_error) < self.alpha:
+                        started = False
+                        print(self.total_error)
+                        for key in list(self.train_dict.keys()):
+                            for val in self.train_dict[key]:
+                                print(self.pass_values(key, val), val, key)
+                    self.total_error = []
+
+
             self.update_nn()
 
 
     def create(self):
         self.get_size()
         self.create_nn()
-        self.create_UI()
+        self.update_UI()
+
+    def update_UI(self):
+        try:
+            text = str(self.error_function(self.total_error))
+        except Exception:
+            text = "0"
+
+        font = pygame.font.SysFont("Arial", 15)
+        text = font.render(text, True, (255, 255, 255))
+        self.surface.blit(text, (10, 50))
 
     def create_UI(self):
+
         self.button = Button.Button((10, 25), "Start", (200,20), (255,0,0))
-        self.button.draw(self.surface)
+
+        checkbox = Checkbox.CheckBox((10, 75), "Start", (20,20), (255,0,0))
+
+        self.checkboxes.append(checkbox)
 
         try:
             text = str(self.error_function(self.total_error))
@@ -165,12 +200,20 @@ class Visualizer(MLP.Multilayerperceptron):
                                     start = (n.get_x(), n.get_y())
                             self.connections.append(Connector.Connector(start, end, (255, 0, 0), str(round(cnt.get_weight(), self.digit))))
 
+
     def draw(self):
         for neuron in self.viz_neurons:
             neuron.draw(self.surface)
 
         for c in self.connections:
             c.draw(self.surface)
+
+        for checkbox in self.checkboxes:
+            checkbox.draw(self.surface)
+
+        self.button.draw(self.surface)
+        self.surface.convert()
+
 
     def update_nn(self):
         self.win = pygame.display.set_mode((self.width, self.height),pygame.RESIZABLE)
@@ -180,8 +223,8 @@ class Visualizer(MLP.Multilayerperceptron):
         Neuron.Neuron.id = 0
         self.connections = []
         self.create()
+        self.update_UI()
         self.draw()
-        self.surface.convert()
         self.win.blit(self.surface, (0, 0))
         pygame.display.update()
 
@@ -240,8 +283,6 @@ class Visualizer(MLP.Multilayerperceptron):
 
     def error_function(self, total_error):
         try:
-            print(total_error)
-
             if self.ef == "MSE":
                 return self.MSE(total_error)
             if self.ef == "MAE":
@@ -276,4 +317,4 @@ class Visualizer(MLP.Multilayerperceptron):
         self.clear_e()
 
 
-v = Visualizer(1, 0.01,[2,3,1], 600, 800)
+v = Visualizer(1, 0.01,[2,4,1], 600, 800)
