@@ -13,6 +13,8 @@ class Visualizer(MLP.Multilayerperceptron):
         MLP.Multilayerperceptron.__init__(self, n, layers)
         pygame.init()
         pygame.display.set_caption("NN")
+        self.n = n
+        self.layers = layers
         self.total_error = []
         self.alpha = 0.1
         self.a =  0
@@ -167,6 +169,22 @@ class Visualizer(MLP.Multilayerperceptron):
                                             self.alpha = 0.0001
                                         if checkbox.ident == "-5":
                                             self.alpha = 0.00001
+
+                                    if checkbox.group == 6:
+                                        if checkbox.ident == "-2":
+                                            self.layers = [2, 2, 1]
+
+                                        if checkbox.ident == "-3":
+                                            self.layers = [2, 3, 1]
+
+                                        if checkbox.ident == "-4":
+                                            self.layers = [2, 4, 1]
+
+                                        if checkbox.ident == "4":
+                                            self.layers = [2,5,1]
+
+                                        self.update_config()
+
                                 else:
                                     checkbox.c = (255, 0, 0)
 
@@ -206,6 +224,7 @@ class Visualizer(MLP.Multilayerperceptron):
 
             self.update_nn()
 
+
     def deactivate_check(self, g, i):
         for c in self.checkboxes:
             if c.group == g and c.ident != i:
@@ -240,16 +259,16 @@ class Visualizer(MLP.Multilayerperceptron):
 
 
         text = self.font.render("Ausgaben: "+str(self.output_list[0]), True, (255, 255, 255))
-        self.surface.blit(text, (10, 875))
+        self.surface.blit(text, (self.width - 150, 0))
 
         text = self.font.render("Ausgaben: " + str(self.output_list[1]), True, (255, 255, 255))
-        self.surface.blit(text, (10, 900))
+        self.surface.blit(text, (self.width - 150, 25))
 
         text = self.font.render("Ausgaben: " + str(self.output_list[2]), True, (255, 255, 255))
-        self.surface.blit(text, (10, 925))
+        self.surface.blit(text, (self.width - 150, 50))
 
         text = self.font.render("Ausgaben: " + str(self.output_list[3]), True, (255, 255, 255))
-        self.surface.blit(text, (10, 950))
+        self.surface.blit(text, (self.width - 150, 75))
 
     def create_UI(self):
         self.labels.append(Label.Label("Aktivierungsfunktion:", True, (255, 255, 255), 15, 10, 100, self.font))
@@ -282,6 +301,12 @@ class Visualizer(MLP.Multilayerperceptron):
         self.labels.append(Label.Label("1 * 10*-3:", True, (255, 255, 255), 15, 10, 775, self.font))
         self.labels.append(Label.Label("1 * 10*-4:", True, (255, 255, 255), 15, 10, 800, self.font))
         self.labels.append(Label.Label("1 * 10*-5:", True, (255, 255, 255), 15, 10, 825, self.font))
+
+        self.labels.append(Label.Label("Anzahl Neuronen in der Hidden Layer:", True, (255, 255, 255), 15, 10, 875, self.font))
+        self.labels.append(Label.Label("2", True, (255, 255, 255), 15, 10, 900, self.font))
+        self.labels.append(Label.Label("3", True, (255, 255, 255), 15, 10, 925, self.font))
+        self.labels.append(Label.Label("4", True, (255, 255, 255), 15, 10, 950, self.font))
+        self.labels.append(Label.Label("5", True, (255, 255, 255), 15, 10, 975, self.font))
 
 
         self.start = Button.Button((10, 25), "Start", (self.s * 5, self.s), (255, 0, 0))
@@ -320,6 +345,12 @@ class Visualizer(MLP.Multilayerperceptron):
         self.checkboxes.append(Checkbox.CheckBox((70, 775), None, (self.s, self.s), (255, 0, 0), "-3", 5))
         self.checkboxes.append(Checkbox.CheckBox((70, 800), None, (self.s, self.s), (255, 0, 0), "-4", 5))
         self.checkboxes.append(Checkbox.CheckBox((70, 825), None, (self.s, self.s), (255, 0, 0), "-5", 5))
+
+        self.checkboxes.append(Checkbox.CheckBox((70, 900), None, (self.s, self.s), (0, 150, 0), "-2", 6))
+        self.checkboxes[-1].set_checked(True)
+        self.checkboxes.append(Checkbox.CheckBox((70, 925), None, (self.s, self.s), (255, 0, 0), "-3", 6))
+        self.checkboxes.append(Checkbox.CheckBox((70, 950), None, (self.s, self.s), (255, 0, 0), "-4", 6))
+        self.checkboxes.append(Checkbox.CheckBox((70, 975), None, (self.s, self.s), (255, 0, 0), "-5", 6))
 
 
     def get_size(self):
@@ -500,4 +531,4 @@ class Visualizer(MLP.Multilayerperceptron):
         self.clear_e()
 
 
-v = Visualizer(1,[2,4,1], 1000, 1000)
+v = Visualizer(1,[2,3,1], 1920, 1080)

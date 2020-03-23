@@ -8,23 +8,24 @@ class Multilayerperceptron:
         self.n_inputs = n_inputs
         self.shape = shape
         self.activation = "SINUS"
+        self.update_config()
 
+    def update_config(self):
+        self.neurons = {}
+        self.shape.insert(0, self.n_inputs * self.shape[0])
+        self.shape.insert(-1, self.shape[-1])
 
-        self.shape.insert(0, n_inputs * shape[0])
-        self.shape.insert(-1, shape[-1])
-
-        for n in range(len(shape))[1:-2]:
+        for n in range(len(self.shape))[1:-2]:
             self.shape[n] += 1
 
-
-        for i in range(len(shape)):
-            for j in range(shape[i]):
-                n = Neuron.Neuron(i +1 == len(shape),i == 0)
+        for i in range(len(self.shape)):
+            for j in range(self.shape[i]):
+                n = Neuron.Neuron(i + 1 == len(self.shape), i == 0)
                 n.set_threshold(-100)
                 n.set_activation_function(self.activation)
                 n.set_step(False)
 
-                if j == shape[i] -1 and shape[i] > 1 and i != 0:
+                if j == self.shape[i] - 1 and self.shape[i] > 1 and i != 0:
                     n.output = 1
                     n.bias = True
 
@@ -41,8 +42,8 @@ class Multilayerperceptron:
             elif len(key_list) == 1:
                 for i in range(len(self.neurons[key_prime])):
                     neuron1 = self.neurons[key_prime][i]
-                    if len(neuron1.get_input_cnts()) < n_inputs and i != len(self.neurons[key_prime]) - 1:
-                        for h in range(n_inputs):
+                    if len(neuron1.get_input_cnts()) < self.n_inputs and i != len(self.neurons[key_prime]) - 1:
+                        for h in range(self.n_inputs):
                             neuron1.set_input_cnts(Connector.Connector(None, neuron1))
                     c = Connector.Connector(neuron1, None)
                     neuron1.add_output(c)
@@ -57,15 +58,15 @@ class Multilayerperceptron:
                     neuron1 = self.neurons[key_prime][i]
                     neuron2 = self.neurons[key_secondary][j]
 
-                    if len(self.neurons[key_secondary]) > 1 and j == len(self.neurons[key_secondary]) -1:
+                    if len(self.neurons[key_secondary]) > 1 and j == len(self.neurons[key_secondary]) - 1:
                         break
 
                     if key_prime == 0:
                         break
 
                     if key_prime == 1 and i != len(self.neurons[key_prime]) - 1:
-                        if len(neuron1.get_input_cnts()) < n_inputs:
-                            for h in range(n_inputs * i, (n_inputs * i + n_inputs)):
+                        if len(neuron1.get_input_cnts()) < self.n_inputs:
+                            for h in range(self.n_inputs * i, (self.n_inputs * i + self.n_inputs)):
                                 connector = Connector.Connector(self.neurons[0][h], neuron1)
                                 neuron1.set_input_cnts(connector)
                                 self.neurons[0][h].add_output(connector)
@@ -84,10 +85,6 @@ class Multilayerperceptron:
                     neuron1.add_output(c)
                     neuron2.set_input_cnts(c)
 
-    def update_config(self):
-        for key in list(self.neurons.keys()):
-            for neuron in self.neurons[key]:
-                neuron.set_activation_function(self.activation)
 
 
 
