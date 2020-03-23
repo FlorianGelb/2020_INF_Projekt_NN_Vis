@@ -7,7 +7,7 @@ class Neuron():
     def __init__(self, x, y, text, c, s):
         self.n_id = Neuron.id
         Neuron.id += 1
-
+        self.font = pygame.font.SysFont("Arial", 15)
         self.x = x
         self.y = y
         self.text = text
@@ -16,8 +16,7 @@ class Neuron():
 
     def draw(self, win):
         pygame.draw.circle(win, self.c, (self.x, self.y), self.s)
-        font = pygame.font.SysFont("Arial", 15)
-        text = font.render(self.text, True, (255, 255, 255))
+        text = self.font.render(self.text, True, (255, 255, 255))
         win.blit(text, (self.x, self.y))
     def set_x(self, x):
         self.x = x

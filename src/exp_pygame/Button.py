@@ -7,11 +7,11 @@ class Button:
         self.size_x, self.size_y = size
         self.text = text
         self.c = color
+        self.font = pygame.font.SysFont("Arial", 15)
 
     def draw(self, win):
         pygame.draw.rect(win, self.c, (self.x, self.y, self.size_x, self.size_y))
-        font = pygame.font.SysFont("Arial", 15)
-        text = font.render(self.text, True, (255, 255, 255))
+        text = self.font.render(self.text, True, (255, 255, 255))
         win.blit(text, (self.x, self.y))
 
     def get_x(self):

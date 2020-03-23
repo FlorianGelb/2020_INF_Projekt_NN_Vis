@@ -11,11 +11,11 @@ class Connector:
         x_end, y_end = self.end
         self.x = int((x_start + x_end) / 2)
         self.y = int((y_start + y_end) / 2)
+        self.font = pygame.font.SysFont("Arial", 15)
 
     def draw(self, win):
         pygame.draw.aaline(win, self.color, self.start, self.end)
-        font = pygame.font.SysFont("Arial", 15)
-        text = font.render(self.text, True, (255, 255, 255))
+        text = self.font.render(self.text, True, (255, 255, 255))
         win.blit(text, (self.x, self.y))
 
     def set_start(self, start):

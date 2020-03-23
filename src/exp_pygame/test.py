@@ -7,14 +7,16 @@ import src.exp_pygame.InputTerminal as Terminal
 import src.exp_pygame.CheckBox as Checkbox
 import random
 import src.exp_pygame.Label as Label
+import time
 
 
 class Visualizer(MLP.Multilayerperceptron):
     def __init__(self, n, eta, layers, width, height):
         MLP.Multilayerperceptron.__init__(self, n, eta, layers)
         pygame.init()
+        pygame.display.set_caption("NN")
         self.total_error = []
-        self.alpha = 0.01
+        self.alpha = 0.0000001
         self.a =  0
         self.b = 0
         self.s = 20
@@ -28,8 +30,8 @@ class Visualizer(MLP.Multilayerperceptron):
         self.ef = "MAE"
         self.train_dict = {1:[(0,1) ,(1, 0), (1,1)], 0:[(0,0)]}
         self.eta = eta
-        self.win = pygame.display.set_mode((self.width, self.height), pygame.RESIZABLE)
-        self.surface = pygame.Surface((self.width, self.height))
+        self.win = pygame.display.set_mode((self.width, self.height), pygame.RESIZABLE |  pygame.DOUBLEBUF)
+        #self.surface = pygame.Surface((self.width, self.height))
         self.viz_neurons = []
         self.connections = []
         self.checkboxes = []
@@ -43,8 +45,9 @@ class Visualizer(MLP.Multilayerperceptron):
         started = False
         key_index = 0
         value_index = 0
-
+        pygame.event.set_allowed([pygame.QUIT,pygame.VIDEORESIZE,pygame.MOUSEBUTTONDOWN])
         while window:
+            t1 = time.time()
             if key_index >= len(list(self.train_dict.keys())):
                 key_index = 0
 
@@ -79,6 +82,7 @@ class Visualizer(MLP.Multilayerperceptron):
                 if event.type == pygame.VIDEORESIZE:
                     self.width = event.w
                     self.height = event.h
+                    self.win = pygame.display.set_mode((self.width, self.height), pygame.RESIZABLE | pygame.DOUBLEBUF)
                     self.update_nn()
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -103,9 +107,12 @@ class Visualizer(MLP.Multilayerperceptron):
 
                             if not started:
                                 if checkbox.get_checked():
+                                    checkbox.c = (0, 150, 0)
+                                    key_index = 0
+                                    value_index = 0
+                                    self.deactivate_check(checkbox.group, checkbox.ident)
+
                                     if checkbox.group == 1:
-                                        checkbox.c = (0, 150, 0)
-                                        self.deactivate_check(checkbox.group, checkbox.ident)
                                         if checkbox.ident == "SIN":
                                             self.activation = "SINUS"
                                         if checkbox.ident == "SIG":
@@ -120,8 +127,6 @@ class Visualizer(MLP.Multilayerperceptron):
                                             self.activation = "TAN"
 
                                     if checkbox.group == 2:
-                                        checkbox.c = (0, 150, 0)
-                                        self.deactivate_check(checkbox.group, checkbox.ident)
                                         if checkbox.ident == "MSE":
                                             self.ef = "MSE"
                                         if checkbox.ident == "RMSE":
@@ -130,16 +135,12 @@ class Visualizer(MLP.Multilayerperceptron):
                                             self.ef = "MAE"
 
                                     if checkbox.group == 3:
-                                        checkbox.c = (0, 150, 0)
-                                        key_index = 0
-                                        value_index = 0
-                                        self.deactivate_check(checkbox.group, checkbox.ident)
                                         if checkbox.ident == "OR":
                                             self.train_dict = {1:[(0,1) ,(1, 0), (1,1)], 0:[(0,0)]}
 
                                         if checkbox.ident == "AND":
                                             self.train_dict = {1: [(1, 1)], 0: [(0, 0), (0, 1), (1, 0)]}
-
+#
                                         if checkbox.ident == "XOR":
                                             self.train_dict = {1: [(0, 1), (1, 0)], 0: [(0, 0), (1, 1)]}
 
@@ -177,9 +178,15 @@ class Visualizer(MLP.Multilayerperceptron):
                         started = False
                         self.finished = True
 
+                        for key in list(self.train_dict.keys()):
+                            for val in self.train_dict[key]:
+                                print(self.pass_values(key, val), key, val)
+
                     self.total_error = []
 
             self.update_nn()
+            t2 = time.time()
+            print(str(t2 - t1) + "t")
 
     def deactivate_check(self, g, i):
         for c in self.checkboxes:
@@ -192,7 +199,6 @@ class Visualizer(MLP.Multilayerperceptron):
         self.get_size()
         self.create_nn()
         self.update_UI()
-
 
     def generate_list(self):
         l = []
@@ -210,6 +216,7 @@ class Visualizer(MLP.Multilayerperceptron):
         except Exception:
             text = "0"
 
+
         font = pygame.font.SysFont("Arial", 15)
         text = font.render(text, True, (255, 255, 255))
         self.surface.blit(text, (10, 50))
@@ -223,10 +230,6 @@ class Visualizer(MLP.Multilayerperceptron):
 
 
     def create_UI(self):
-
-#        font = pygame.font.SysFont("Arial", 15)
-#        text = font.render()
- #       self.surface.blit(text, (10, 100))
         self.labels.append(Label.Label("Aktivierungsfunktion:", True, (255, 255, 255), 15, 10, 100))
         self.labels.append(Label.Label("SIN", True, (255, 255, 255), 15, 10, 125))
         self.labels.append(Label.Label("SIG", True, (255, 255, 255), 15, 10, 150))
@@ -268,15 +271,6 @@ class Visualizer(MLP.Multilayerperceptron):
         self.checkboxes.append(Checkbox.CheckBox((50, 475), None, (self.s, self.s), (255, 0, 0), "AND", 3))
         self.checkboxes.append(Checkbox.CheckBox((50, 500), None, (self.s, self.s), (255, 0, 0), "XOR", 3))
 
-
-        try:
-            text = str(self.error_function(self.total_error))
-        except Exception:
-            text = "0"
-
-        font = pygame.font.SysFont("Arial", 15)
-        text = font.render(text, True, (255, 255, 255))
-        self.surface.blit(text, (10, 50))
 
     def get_size(self):
         l,m = self.get_layer_max()
@@ -350,16 +344,13 @@ class Visualizer(MLP.Multilayerperceptron):
                 checkbox.size_y = 20
 
         for label in self.labels:
-            label.draw(self.win)
+            label.draw(self.surface)
 
         self.button.draw(self.surface)
         self.surface.convert()
 
-
     def update_nn(self):
-        self.win = pygame.display.set_mode((self.width, self.height), pygame.RESIZABLE)
-        self.surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA, 32)
-        self.surface.convert_alpha()
+        self.surface = pygame.Surface((self.width, self.height))
         self.viz_neurons = []
         Neuron.Neuron.id = 0
         self.connections = []
@@ -458,4 +449,4 @@ class Visualizer(MLP.Multilayerperceptron):
         self.clear_e()
 
 
-v = Visualizer(1, 0.01,[2,4,1], 800, 600)
+v = Visualizer(1, 0.02,[2,3,1], 800, 600)

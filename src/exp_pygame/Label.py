@@ -8,8 +8,8 @@ class Label:
         self.s = s
         self.x = x
         self.y = y
+        self.font = pygame.font.SysFont("Arial", 15)
 
     def draw(self, win):
-        font = pygame.font.SysFont("Arial", 15)
-        text = font.render(self.text, self.aa, self.c)
+        text = self.font.render(self.text, self.aa, self.c)
         win.blit(text, (self.x, self.y))
