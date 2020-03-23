@@ -4,10 +4,10 @@ class Neuron():
 
     id = 0
 
-    def __init__(self, x, y, text, c, s):
+    def __init__(self, x, y, text, c, s, font):
         self.n_id = Neuron.id
         Neuron.id += 1
-        self.font = pygame.font.SysFont("Arial", 15)
+        self.font = font
         self.x = x
         self.y = y
         self.text = text

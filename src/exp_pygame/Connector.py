@@ -2,7 +2,7 @@ import pygame
 
 class Connector:
 
-    def __init__(self, start, end, c, text):
+    def __init__(self, start, end, c, text, font):
         self.start = start
         self.end = end
         self.color = c
@@ -11,7 +11,7 @@ class Connector:
         x_end, y_end = self.end
         self.x = int((x_start + x_end) / 2)
         self.y = int((y_start + y_end) / 2)
-        self.font = pygame.font.SysFont("Arial", 15)
+        self.font = font
 
     def draw(self, win):
         pygame.draw.aaline(win, self.color, self.start, self.end)

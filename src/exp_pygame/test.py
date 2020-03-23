@@ -31,7 +31,7 @@ class Visualizer(MLP.Multilayerperceptron):
         self.train_dict = {1:[(0,1) ,(1, 0), (1,1)], 0:[(0,0)]}
         self.eta = eta
         self.win = pygame.display.set_mode((self.width, self.height), pygame.RESIZABLE |  pygame.DOUBLEBUF)
-        #self.surface = pygame.Surface((self.width, self.height))
+        self.font = pygame.font.SysFont("Arial", 15)
         self.viz_neurons = []
         self.connections = []
         self.checkboxes = []
@@ -230,23 +230,23 @@ class Visualizer(MLP.Multilayerperceptron):
 
 
     def create_UI(self):
-        self.labels.append(Label.Label("Aktivierungsfunktion:", True, (255, 255, 255), 15, 10, 100))
-        self.labels.append(Label.Label("SIN", True, (255, 255, 255), 15, 10, 125))
-        self.labels.append(Label.Label("SIG", True, (255, 255, 255), 15, 10, 150))
-        self.labels.append(Label.Label("LIN", True, (255, 255, 255), 15, 10, 175))
-        self.labels.append(Label.Label("TAN", True, (255, 255, 255), 15, 10, 200))
-        self.labels.append(Label.Label("REL", True, (255, 255, 255), 15, 10, 225))
-        self.labels.append(Label.Label("STP", True, (255, 255, 255), 15, 10, 250))
+        self.labels.append(Label.Label("Aktivierungsfunktion:", True, (255, 255, 255), 15, 10, 100, self.font))
+        self.labels.append(Label.Label("SIN", True, (255, 255, 255), 15, 10, 125,self.font))
+        self.labels.append(Label.Label("SIG", True, (255, 255, 255), 15, 10, 150, self.font))
+        self.labels.append(Label.Label("LIN", True, (255, 255, 255), 15, 10, 175, self.font))
+        self.labels.append(Label.Label("TAN", True, (255, 255, 255), 15, 10, 200, self.font))
+        self.labels.append(Label.Label("REL", True, (255, 255, 255), 15, 10, 225, self.font))
+        self.labels.append(Label.Label("STP", True, (255, 255, 255), 15, 10, 250, self.font))
 
-        self.labels.append(Label.Label("Fehlerfunktion", True, (255, 255, 255), 15, 10, 300))
-        self.labels.append(Label.Label("MAE", True, (255, 255, 255), 15, 10, 325))
-        self.labels.append(Label.Label("MSE", True, (255, 255, 255), 15, 10, 350))
-        self.labels.append(Label.Label("RMSE", True, (255, 255, 255), 15, 10, 375))
+        self.labels.append(Label.Label("Fehlerfunktion", True, (255, 255, 255), 15, 10, 300, self.font))
+        self.labels.append(Label.Label("MAE", True, (255, 255, 255), 15, 10, 325, self.font))
+        self.labels.append(Label.Label("MSE", True, (255, 255, 255), 15, 10, 350, self.font))
+        self.labels.append(Label.Label("RMSE", True, (255, 255, 255), 15, 10, 375, self.font))
 
-        self.labels.append(Label.Label("Training", True, (255, 255, 255), 15, 10, 425))
-        self.labels.append(Label.Label("OR", True, (255, 255, 255), 15, 10, 450))
-        self.labels.append(Label.Label("AND", True, (255, 255, 255), 15, 10, 475))
-        self.labels.append(Label.Label("XOR", True, (255, 255, 255), 15, 10, 500))
+        self.labels.append(Label.Label("Training", True, (255, 255, 255), 15, 10, 425, self.font))
+        self.labels.append(Label.Label("OR", True, (255, 255, 255), 15, 10, 450,self.font))
+        self.labels.append(Label.Label("AND", True, (255, 255, 255), 15, 10, 475, self.font))
+        self.labels.append(Label.Label("XOR", True, (255, 255, 255), 15, 10, 500, self.font))
 
         self.button = Button.Button((10, 25), "Start", (self.s * 10, self.s), (255,0,0))
 
@@ -311,9 +311,9 @@ class Visualizer(MLP.Multilayerperceptron):
                         c = (155, 0, 255)
 
                     if key == list(self.neurons.keys())[-1] or key == list(self.neurons.keys())[0]:
-                        self.viz_neurons.append(Terminal.InputTerminal(x,y, str(neuron.input),c, self.s, self.s))
+                        self.viz_neurons.append(Terminal.InputTerminal(x,y, str(neuron.input),c, self.s, self.s, self.font))
                     else:
-                        self.viz_neurons.append(Neuron.Neuron(x, y, str(round(neuron.output, self.digit)), c, self.s))
+                        self.viz_neurons.append(Neuron.Neuron(x, y, str(round(neuron.output, self.digit)), c, self.s, self.font))
 
             for key in list(self.neurons.keys()):
                 for neuron in self.neurons[key]:
@@ -324,7 +324,7 @@ class Visualizer(MLP.Multilayerperceptron):
                                     end = (n.get_x(), n.get_y())
                                 if cnt.get_input_neuron().n_id == n.get_id():
                                     start = (n.get_x(), n.get_y())
-                            self.connections.append(Connector.Connector(start, end, (255, 0, 0), str(round(cnt.get_weight(), self.digit))))
+                            self.connections.append(Connector.Connector(start, end, (255, 0, 0), str(round(cnt.get_weight(), self.digit)), self.font))
 
 
     def draw(self):
@@ -449,4 +449,4 @@ class Visualizer(MLP.Multilayerperceptron):
         self.clear_e()
 
 
-v = Visualizer(1, 0.02,[2,3,1], 800, 600)
+v = Visualizer(1, 0.01,[2,3,1], 800, 600)
