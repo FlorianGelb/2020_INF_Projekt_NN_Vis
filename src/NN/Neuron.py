@@ -4,7 +4,7 @@ import math
 class Neuron:
 
     threshold = 0
-    activation_function_type = "SINUS"
+    activation_function_type = "LINEAR"
     Neuron_ID = 0
 
     def __init__(self, o,i, eta):

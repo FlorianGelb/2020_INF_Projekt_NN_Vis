@@ -14,7 +14,7 @@ class Visualizer(MLP.Multilayerperceptron):
         pygame.init()
         pygame.display.set_caption("NN")
         self.total_error = []
-        self.alpha = 0.0000001
+        self.alpha = 0.00001
         self.a =  0
         self.b = 0
         self.s = 20
@@ -120,6 +120,7 @@ class Visualizer(MLP.Multilayerperceptron):
                                             self.activation = "STEP"
                                         if checkbox.ident == "TAN":
                                             self.activation = "TAN"
+                                        self.update_config()
 
                                     if checkbox.group == 2:
                                         if checkbox.ident == "MSE":
@@ -139,6 +140,7 @@ class Visualizer(MLP.Multilayerperceptron):
                                         if checkbox.ident == "XOR":
                                             self.train_dict = {1: [(0, 1), (1, 0)], 0: [(0, 0), (1, 1)]}
 
+
                                 else:
                                     checkbox.c = (255, 0, 0)
 
@@ -150,23 +152,17 @@ class Visualizer(MLP.Multilayerperceptron):
                 self.train(val, key)
 
                 ##if self.error_function(self.total_error) <= self.alpha:
-                #if not self.training:
-                 #   if self.error_function([self.total_error[-1]]) <= self.alpha:
-                  #      key = random.choice(list(self.train_dict.keys()))
-                   #     val = random.choice(self.train_dict[key])
-                    #    if value_index < len(self.train_dict[key_index]):
-                     #       value_index += 1
-                    #    else:
-                     #       value_index = 0
+                if not self.training:
+                    if self.error_function([self.total_error[-1]]) <= self.alpha:
 
-                     #   if key_index < len(list(self.train_dict.keys())):
-                    #        if value_index > len(self.train_dict[key_index]) - 1:
-                    #            key_index += 1
-                     #           value_index = 0
-                    #        else:
-                     #           pass
-                    #    else:
-                    #        key_index = 0
+                        if key_index < len(list(self.train_dict.keys())):
+                            if value_index > len(self.train_dict[key_index]) - 1:
+                                key_index += 1
+                                value_index = 0
+                            else:
+                                pass
+                        else:
+                            key_index = 0
 
                 if key == list(self.train_dict.keys())[-1] and val == self.train_dict[list(self.train_dict.keys())[-1]][-1]:
                     if self.error_function(self.total_error) < self.alpha:
@@ -251,8 +247,8 @@ class Visualizer(MLP.Multilayerperceptron):
         self.checkboxes.append(Checkbox.CheckBox((35, 150), None, (self.s, self.s), (255, 0, 0), "SIG", 1))
         self.checkboxes.append(Checkbox.CheckBox((35, 175), None, (self.s, self.s), (255, 0, 0), "LIN", 1))
         self.checkboxes.append(Checkbox.CheckBox((35, 200), None, (self.s, self.s), (255, 0, 0), "TAN", 1))
-        self.checkboxes.append(Checkbox.CheckBox((35, 225), None, (self.s, self.s), (255, 0, 0), "RELU", 1))
-        self.checkboxes.append(Checkbox.CheckBox((35, 250), None, (self.s, self.s), (255, 0, 0), "STEP", 1))
+        self.checkboxes.append(Checkbox.CheckBox((35, 225), None, (self.s, self.s), (255, 0, 0), "REL", 1))
+        self.checkboxes.append(Checkbox.CheckBox((35, 250), None, (self.s, self.s), (255, 0, 0), "STP", 1))
 
         self.checkboxes.append(Checkbox.CheckBox((50, 325), None, (self.s, self.s), (0, 150, 0), "MAE", 2))
         self.checkboxes[-1].set_checked(True)

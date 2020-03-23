@@ -84,8 +84,10 @@ class Multilayerperceptron:
                     neuron1.add_output(c)
                     neuron2.set_input_cnts(c)
 
-
-
+    def update_config(self):
+        for key in list(self.neurons.keys()):
+            for neuron in self.neurons[key]:
+                neuron.set_activation_function(self.activation)
 
 
 
