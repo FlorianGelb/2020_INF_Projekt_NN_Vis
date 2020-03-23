@@ -8,7 +8,7 @@ class Perceptron:
         self.train_data = {}
         self.n_inputs = n_inputs
         self.eta = eta * 10 ** -4
-        self.neuron.set_treshold(0.4)
+        self.neuron.set_threshold(0.4)
         self.neuron.set_activation_function("RELU")
         self.dbg_e = []
 

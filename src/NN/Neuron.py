@@ -7,7 +7,7 @@ class Neuron:
     activation_function_type = "LINEAR"
     Neuron_ID = 0
 
-    def __init__(self, o,i, eta):
+    def __init__(self, o,i):
         self.n_id = Neuron.Neuron_ID
         Neuron.Neuron_ID += 1
         self.o = o
@@ -19,10 +19,7 @@ class Neuron:
         self.bias = 0
         self.cnt_input = []
         self.add_step = False
-        self.eta = eta
         self.e = 0
-
-
 
     def get_output_cnts(self):
         return self.output_to_neuron
@@ -51,7 +48,6 @@ class Neuron:
     def get_bias(self):
         return self.bias
 
-
     def add_output(self, c):
         self.output_to_neuron.append(c)
 
@@ -59,15 +55,6 @@ class Neuron:
         for n in self.output_to_neuron:
             if n == c:
                 self.output_to_neuron.remove(n)
-
-    def calc_error(self, output):
-        self.d_w = - (self.eta * self.e * output)
-        return self.d_w
-
-    def error(self, error_next):
-            error_mom = self.activation_function_derivatives(self.scalar_product()) * error_next
-            self.e += error_mom
-            return self.e
 
     def clear_input(self):
         self.input = []
@@ -83,7 +70,7 @@ class Neuron:
     def set_input(self, input):
         self.input.append(input)
 
-    def set_treshold(self, t):
+    def set_threshold(self, t):
         self.threshold = t
 
     def set_activation_function(self, af):
@@ -99,18 +86,16 @@ class Neuron:
         return sum
 
     def activation_function(self, x):
-        if self.activation_function_type == "RELU":
-            return self.relu(x)
-        if self.activation_function_type == "LINEAR":
-            return self.linear(x)
-        if self.activation_function_type == "SINUS":
-            return self.sinus(x)
-        if self.activation_function_type == "TAN":
-            return self.tan(x)
-        if self.activation_function_type == "SIG":
-            return self.sig(x)
-        if self.activation_function_type == "STEP":
-            return self.step(x)
+            if self.activation_function_type == "RELU":
+                return self.relu(x)
+            if self.activation_function_type == "LINEAR":
+                return self.linear(x)
+            if self.activation_function_type == "SINUS":
+                return self.sinus(x)
+            if self.activation_function_type == "SIG":
+                return self.sig(x)
+            if self.activation_function_type == "STEP":
+                return self.step(x)
 
     def activation_function_derivatives(self, x):
         if self.activation_function_type == "RELU":
@@ -119,24 +104,22 @@ class Neuron:
             return self.der_linear()
         if self.activation_function_type == "SINUS":
             return self.der_sinus(x)
-        if self.activation_function_type == "TAN":
-            return self.der_tan(x)
         if self.activation_function_type == "SIG":
             return self.der_sig(x)
         if self.activation_function_type == "STEP":
             return 1
+
     def step(self, x):
         if x > 0:
             return 1
         return 0
 
-    def sig(self, x):
+    @staticmethod
+    def sig(x):
         return(1/(1 + (math.e**-x )))
 
-    def tan(self, x):
-        return math.tan(x)
-
-    def sinus(self, x):
+    @staticmethod
+    def sinus(x):
         return math.sin(x)
 
     def relu(self, x):
@@ -155,6 +138,7 @@ class Neuron:
             return 0
         else:
             return 1
+
     @staticmethod
     def der_linear():
         return 1
@@ -163,10 +147,8 @@ class Neuron:
     def der_sinus(x):
         return math.cos(x)
 
-    def der_tan(self, x):
-        return (1/(self.der_sinus(x)**2))
-
-    def der_sig(self, x):
+    @staticmethod
+    def der_sig(x):
         return((math.e ** -x)/((1+math.e**-x)**2))
 
     def generate_output(self, dbg=False):

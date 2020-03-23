@@ -3,7 +3,7 @@ import src.NN.Connector as Connector
 
 
 class Multilayerperceptron:
-    def __init__(self, n_inputs, eta, shape):
+    def __init__(self, n_inputs, shape):
         self.neurons = {}
         self.n_inputs = n_inputs
         self.shape = shape
@@ -19,8 +19,8 @@ class Multilayerperceptron:
 
         for i in range(len(shape)):
             for j in range(shape[i]):
-                n = Neuron.Neuron(i +1 == len(shape),i == 0,eta)
-                n.set_treshold(-100)
+                n = Neuron.Neuron(i +1 == len(shape),i == 0)
+                n.set_threshold(-100)
                 n.set_activation_function(self.activation)
                 n.set_step(False)
 

@@ -9,12 +9,12 @@ import src.exp_pygame.Label as Label
 
 
 class Visualizer(MLP.Multilayerperceptron):
-    def __init__(self, n, eta, layers, width, height):
-        MLP.Multilayerperceptron.__init__(self, n, eta, layers)
+    def __init__(self, n, layers, width, height):
+        MLP.Multilayerperceptron.__init__(self, n, layers)
         pygame.init()
         pygame.display.set_caption("NN")
         self.total_error = []
-        self.alpha = 0.00001
+        self.alpha = 0.1
         self.a =  0
         self.b = 0
         self.s = 20
@@ -27,7 +27,7 @@ class Visualizer(MLP.Multilayerperceptron):
         self.digit = 4
         self.ef = "MAE"
         self.train_dict = {1:[(0,1) ,(1, 0), (1,1)], 0:[(0,0)]}
-        self.eta = eta
+        self.eta = 0.1
         self.win = pygame.display.set_mode((self.width, self.height), pygame.RESIZABLE |  pygame.DOUBLEBUF)
         self.font = pygame.font.SysFont("Arial", 15)
         self.viz_neurons = []
@@ -43,7 +43,7 @@ class Visualizer(MLP.Multilayerperceptron):
         started = False
         key_index = 0
         value_index = 0
-       # pygame.event.set_allowed([pygame.QUIT,pygame.VIDEORESIZE,pygame.MOUSEBUTTONDOWN])
+        pygame.event.set_allowed([pygame.QUIT, pygame.VIDEORESIZE, pygame.MOUSEBUTTONDOWN])
         while window:
             if key_index >= len(list(self.train_dict.keys())):
                 key_index = 0
@@ -81,11 +81,15 @@ class Visualizer(MLP.Multilayerperceptron):
                     self.update_nn()
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if mx > self.button.get_x() and mx < self.button.get_colliding_x() and my > self.button.get_y() and my < self.button.get_colliding_y():
+                    if mx > self.start.get_x() and mx < self.start.get_colliding_x() and my > self.start.get_y() and my < self.start.get_colliding_y():
                         started = True
                         self.finished = False
                         self.train(val, key)
                         self.update_nn()
+
+                    if mx > self.stop.get_x() and mx < self.stop.get_colliding_x() and my > self.stop.get_y() and my < self.stop.get_colliding_y():
+                        started = False
+                        self.finished = True
 
                     for checkbox in self.checkboxes:
                         if mx > checkbox.get_x() and mx < checkbox.get_colliding_x() and my > checkbox.get_y() and my < checkbox.get_colliding_y():
@@ -132,7 +136,7 @@ class Visualizer(MLP.Multilayerperceptron):
 
                                     if checkbox.group == 3:
                                         if checkbox.ident == "OR":
-                                            self.train_dict = {1:[(0,1) ,(1, 0), (1,1)], 0:[(0,0)]}
+                                            self.train_dict = {1: [(0, 1), (1, 0), (1, 1)], 0: [(0, 0)]}
 
                                         if checkbox.ident == "AND":
                                             self.train_dict = {1: [(1, 1)], 0: [(0, 0), (0, 1), (1, 0)]}
@@ -140,20 +144,44 @@ class Visualizer(MLP.Multilayerperceptron):
                                         if checkbox.ident == "XOR":
                                             self.train_dict = {1: [(0, 1), (1, 0)], 0: [(0, 0), (1, 1)]}
 
+                                    if checkbox.group == 4:
+                                        if checkbox.ident == "-1":
+                                            self.eta = 0.1
+                                        if checkbox.ident == "-2":
+                                            self.eta = 0.02
+                                        if checkbox.ident == "-3":
+                                            self.eta = 0.001
+                                        if checkbox.ident == "-4":
+                                            self.eta = 0.0001
+                                        if checkbox.ident == "-5":
+                                            self.eta = 0.00001
 
+                                    if checkbox.group == 5:
+                                        if checkbox.ident == "-1":
+                                            self.alpha = 0.1
+                                        if checkbox.ident == "-2":
+                                            self.alpha = 0.01
+                                        if checkbox.ident == "-3":
+                                            self.alpha = 0.001
+                                        if checkbox.ident == "-4":
+                                            self.alpha = 0.0001
+                                        if checkbox.ident == "-5":
+                                            self.alpha = 0.00001
                                 else:
                                     checkbox.c = (255, 0, 0)
 
-
                             checkbox.set_checked(not checkbox.get_checked())
-
-
             if started:
                 self.train(val, key)
 
-                ##if self.error_function(self.total_error) <= self.alpha:
                 if not self.training:
+
                     if self.error_function([self.total_error[-1]]) <= self.alpha:
+
+                        if value_index < len(self.train_dict[key_index]):
+                            value_index += 1
+                        else:
+                            value_index = 0
 
                         if key_index < len(list(self.train_dict.keys())):
                             if value_index > len(self.train_dict[key_index]) - 1:
@@ -166,6 +194,7 @@ class Visualizer(MLP.Multilayerperceptron):
 
                 if key == list(self.train_dict.keys())[-1] and val == self.train_dict[list(self.train_dict.keys())[-1]][-1]:
                     if self.error_function(self.total_error) < self.alpha:
+                        print(self.alpha)
                         started = False
                         self.finished = True
 
@@ -183,7 +212,6 @@ class Visualizer(MLP.Multilayerperceptron):
                 c.set_checked(False)
                 c.c = (255, 0, 0)
 
-
     def create(self):
         self.get_size()
         self.create_nn()
@@ -194,71 +222,104 @@ class Visualizer(MLP.Multilayerperceptron):
         if self.finished:
             for key in list(self.train_dict.keys()):
                 for val in self.train_dict[key]:
-                    l.append(round(self.pass_values(key, val), 3))
+                    l.append((str(val) + "-->" + str(round(self.pass_values(key, val), 5))))
 
             return l
         return self.output_list
 
     def update_UI(self):
         try:
-            text = self.ef + " " + str(round(self.error_function(self.total_error), 4))
+            text = self.ef + " " + str(round(self.error_function(self.total_error), 5))
         except Exception:
             text = "0"
 
-
-        font = pygame.font.SysFont("Arial", 15)
-        text = font.render(text, True, (255, 255, 255))
+        text = self.font.render(text, True, (255, 255, 255))
         self.surface.blit(text, (10, 50))
 
         self.output_list = self.generate_list()
 
-        font = pygame.font.SysFont("Arial", 15)
-        text = font.render("Ausgaben: "+str(self.output_list), True, (255, 255, 255))
-        self.surface.blit(text, (100, 50))
 
+        text = self.font.render("Ausgaben: "+str(self.output_list[0]), True, (255, 255, 255))
+        self.surface.blit(text, (10, 875))
 
+        text = self.font.render("Ausgaben: " + str(self.output_list[1]), True, (255, 255, 255))
+        self.surface.blit(text, (10, 900))
+
+        text = self.font.render("Ausgaben: " + str(self.output_list[2]), True, (255, 255, 255))
+        self.surface.blit(text, (10, 925))
+
+        text = self.font.render("Ausgaben: " + str(self.output_list[3]), True, (255, 255, 255))
+        self.surface.blit(text, (10, 950))
 
     def create_UI(self):
         self.labels.append(Label.Label("Aktivierungsfunktion:", True, (255, 255, 255), 15, 10, 100, self.font))
         self.labels.append(Label.Label("SIN", True, (255, 255, 255), 15, 10, 125,self.font))
         self.labels.append(Label.Label("SIG", True, (255, 255, 255), 15, 10, 150, self.font))
         self.labels.append(Label.Label("LIN", True, (255, 255, 255), 15, 10, 175, self.font))
-        self.labels.append(Label.Label("TAN", True, (255, 255, 255), 15, 10, 200, self.font))
-        self.labels.append(Label.Label("REL", True, (255, 255, 255), 15, 10, 225, self.font))
-        self.labels.append(Label.Label("STP", True, (255, 255, 255), 15, 10, 250, self.font))
+        self.labels.append(Label.Label("REL", True, (255, 255, 255), 15, 10, 200, self.font))
+        self.labels.append(Label.Label("STP", True, (255, 255, 255), 15, 10, 225, self.font))
 
-        self.labels.append(Label.Label("Fehlerfunktion", True, (255, 255, 255), 15, 10, 300, self.font))
-        self.labels.append(Label.Label("MAE", True, (255, 255, 255), 15, 10, 325, self.font))
-        self.labels.append(Label.Label("MSE", True, (255, 255, 255), 15, 10, 350, self.font))
-        self.labels.append(Label.Label("RMSE", True, (255, 255, 255), 15, 10, 375, self.font))
+        self.labels.append(Label.Label("Fehlerfunktion", True, (255, 255, 255), 15, 10, 275, self.font))
+        self.labels.append(Label.Label("MAE", True, (255, 255, 255), 15, 10, 300, self.font))
+        self.labels.append(Label.Label("MSE", True, (255, 255, 255), 15, 10, 325, self.font))
+        self.labels.append(Label.Label("RMSE", True, (255, 255, 255), 15, 10, 350, self.font))
 
-        self.labels.append(Label.Label("Training", True, (255, 255, 255), 15, 10, 425, self.font))
-        self.labels.append(Label.Label("OR", True, (255, 255, 255), 15, 10, 450,self.font))
-        self.labels.append(Label.Label("AND", True, (255, 255, 255), 15, 10, 475, self.font))
-        self.labels.append(Label.Label("XOR", True, (255, 255, 255), 15, 10, 500, self.font))
+        self.labels.append(Label.Label("Training", True, (255, 255, 255), 15, 10, 400, self.font))
+        self.labels.append(Label.Label("OR", True, (255, 255, 255), 15, 10, 425,self.font))
+        self.labels.append(Label.Label("AND", True, (255, 255, 255), 15, 10, 450, self.font))
+        self.labels.append(Label.Label("XOR", True, (255, 255, 255), 15, 10, 475, self.font))
 
-        self.button = Button.Button((10, 25), "Start", (self.s * 10, self.s), (255,0,0))
+        self.labels.append(Label.Label("Lernrate:", True, (255, 255, 255), 15, 10, 525, self.font))
+        self.labels.append(Label.Label("1*10^-1", True, (255, 255, 255), 15, 10, 550, self.font))
+        self.labels.append(Label.Label("1 * 10^-2:", True, (255, 255, 255), 15, 10, 575, self.font))
+        self.labels.append(Label.Label("1 * 10*-3:", True, (255, 255, 255), 15, 10, 600, self.font))
+        self.labels.append(Label.Label("1 * 10*-4:", True, (255, 255, 255), 15, 10, 625, self.font))
+        self.labels.append(Label.Label("1 * 10*-5:", True, (255, 255, 255), 15, 10, 650, self.font))
+
+        self.labels.append(Label.Label("Fehlerrate:", True, (255, 255, 255), 15, 10, 700, self.font))
+        self.labels.append(Label.Label("1*10^-1", True, (255, 255, 255), 15, 10, 725, self.font))
+        self.labels.append(Label.Label("1 * 10^-2:", True, (255, 255, 255), 15, 10, 750, self.font))
+        self.labels.append(Label.Label("1 * 10*-3:", True, (255, 255, 255), 15, 10, 775, self.font))
+        self.labels.append(Label.Label("1 * 10*-4:", True, (255, 255, 255), 15, 10, 800, self.font))
+        self.labels.append(Label.Label("1 * 10*-5:", True, (255, 255, 255), 15, 10, 825, self.font))
+
+
+        self.start = Button.Button((10, 25), "Start", (self.s * 5, self.s), (255, 0, 0))
+        self.stop = Button.Button((125, 25), "Stop", (self.s * 5, self.s), (255, 0, 0))
 
         checkbox = Checkbox.CheckBox((10, 75), "T", (self.s, self.s), (255,0,0), "TRA", 0)
         self.checkboxes.append(checkbox)
 
-        self.checkboxes.append(Checkbox.CheckBox((35, 125), None, (self.s, self.s), (0,150,0), "SIN", 1))
+        self.checkboxes.append(Checkbox.CheckBox((40, 125), None, (self.s, self.s), (0,150,0), "SIN", 1))
         self.checkboxes[-1].set_checked(True)
-        self.checkboxes.append(Checkbox.CheckBox((35, 150), None, (self.s, self.s), (255, 0, 0), "SIG", 1))
-        self.checkboxes.append(Checkbox.CheckBox((35, 175), None, (self.s, self.s), (255, 0, 0), "LIN", 1))
-        self.checkboxes.append(Checkbox.CheckBox((35, 200), None, (self.s, self.s), (255, 0, 0), "TAN", 1))
-        self.checkboxes.append(Checkbox.CheckBox((35, 225), None, (self.s, self.s), (255, 0, 0), "REL", 1))
-        self.checkboxes.append(Checkbox.CheckBox((35, 250), None, (self.s, self.s), (255, 0, 0), "STP", 1))
+        self.checkboxes.append(Checkbox.CheckBox((40, 150), None, (self.s, self.s), (255, 0, 0), "SIG", 1))
+        self.checkboxes.append(Checkbox.CheckBox((40, 175), None, (self.s, self.s), (255, 0, 0), "LIN", 1))
+        self.checkboxes.append(Checkbox.CheckBox((40, 200), None, (self.s, self.s), (255, 0, 0), "REL", 1))
+        self.checkboxes.append(Checkbox.CheckBox((40, 225), None, (self.s, self.s), (255, 0, 0), "STP", 1))
 
-        self.checkboxes.append(Checkbox.CheckBox((50, 325), None, (self.s, self.s), (0, 150, 0), "MAE", 2))
+        self.checkboxes.append(Checkbox.CheckBox((50, 300), None, (self.s, self.s), (0, 150, 0), "MAE", 2))
         self.checkboxes[-1].set_checked(True)
-        self.checkboxes.append(Checkbox.CheckBox((50, 350), None, (self.s, self.s), (255, 0, 0), "MSE", 2))
-        self.checkboxes.append(Checkbox.CheckBox((50, 375), None, (self.s, self.s), (255, 0, 0), "RMSE", 2))
+        self.checkboxes.append(Checkbox.CheckBox((50, 325), None, (self.s, self.s), (255, 0, 0), "MSE", 2))
+        self.checkboxes.append(Checkbox.CheckBox((50, 350), None, (self.s, self.s), (255, 0, 0), "RMSE", 2))
 
-        self.checkboxes.append(Checkbox.CheckBox((50, 450), None, (self.s, self.s), (0, 150, 0), "OR", 3))
+        self.checkboxes.append(Checkbox.CheckBox((45, 425), None, (self.s, self.s), (0, 150, 0), "OR", 3))
         self.checkboxes[-1].set_checked(True)
-        self.checkboxes.append(Checkbox.CheckBox((50, 475), None, (self.s, self.s), (255, 0, 0), "AND", 3))
-        self.checkboxes.append(Checkbox.CheckBox((50, 500), None, (self.s, self.s), (255, 0, 0), "XOR", 3))
+        self.checkboxes.append(Checkbox.CheckBox((45, 450), None, (self.s, self.s), (255, 0, 0), "AND", 3))
+        self.checkboxes.append(Checkbox.CheckBox((45, 475), None, (self.s, self.s), (255, 0, 0), "XOR", 3))
+
+        self.checkboxes.append(Checkbox.CheckBox((70, 550), None, (self.s, self.s), (0, 150, 0), "-1", 4))
+        self.checkboxes[-1].set_checked(True)
+        self.checkboxes.append(Checkbox.CheckBox((70, 575), None, (self.s, self.s), (255, 0, 0), "-2", 4))
+        self.checkboxes.append(Checkbox.CheckBox((70, 600), None, (self.s, self.s), (255, 0, 0), "-3", 4))
+        self.checkboxes.append(Checkbox.CheckBox((70, 625), None, (self.s, self.s), (255, 0, 0), "-4", 4))
+        self.checkboxes.append(Checkbox.CheckBox((70, 650), None, (self.s, self.s), (255, 0, 0), "-5", 4))
+
+        self.checkboxes.append(Checkbox.CheckBox((70, 725), None, (self.s, self.s), (0, 150, 0), "-1", 5))
+        self.checkboxes[-1].set_checked(True)
+        self.checkboxes.append(Checkbox.CheckBox((70, 750), None, (self.s, self.s), (255, 0, 0), "-2", 5))
+        self.checkboxes.append(Checkbox.CheckBox((70, 775), None, (self.s, self.s), (255, 0, 0), "-3", 5))
+        self.checkboxes.append(Checkbox.CheckBox((70, 800), None, (self.s, self.s), (255, 0, 0), "-4", 5))
+        self.checkboxes.append(Checkbox.CheckBox((70, 825), None, (self.s, self.s), (255, 0, 0), "-5", 5))
 
 
     def get_size(self):
@@ -335,7 +396,8 @@ class Visualizer(MLP.Multilayerperceptron):
         for label in self.labels:
             label.draw(self.surface)
 
-        self.button.draw(self.surface)
+        self.stop.draw(self.surface)
+        self.start.draw(self.surface)
         self.surface.convert()
 
     def update_nn(self):
@@ -438,4 +500,4 @@ class Visualizer(MLP.Multilayerperceptron):
         self.clear_e()
 
 
-v = Visualizer(1, 0.01,[2,4,1], 800, 600)
+v = Visualizer(1,[2,4,1], 1000, 1000)
