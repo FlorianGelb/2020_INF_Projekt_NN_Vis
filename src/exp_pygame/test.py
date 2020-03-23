@@ -5,9 +5,7 @@ import src.exp_pygame.Connector as Connector
 import src.exp_pygame.Button as Button
 import src.exp_pygame.InputTerminal as Terminal
 import src.exp_pygame.CheckBox as Checkbox
-import random
 import src.exp_pygame.Label as Label
-import time
 
 
 class Visualizer(MLP.Multilayerperceptron):
@@ -45,9 +43,8 @@ class Visualizer(MLP.Multilayerperceptron):
         started = False
         key_index = 0
         value_index = 0
-        pygame.event.set_allowed([pygame.QUIT,pygame.VIDEORESIZE,pygame.MOUSEBUTTONDOWN])
+       # pygame.event.set_allowed([pygame.QUIT,pygame.VIDEORESIZE,pygame.MOUSEBUTTONDOWN])
         while window:
-            t1 = time.time()
             if key_index >= len(list(self.train_dict.keys())):
                 key_index = 0
 
@@ -55,8 +52,6 @@ class Visualizer(MLP.Multilayerperceptron):
             val = self.train_dict[key][value_index]
 
             if self.training:
-
-
                 if value_index < len(self.train_dict[key_index]):
                     value_index += 1
                 else:
@@ -155,23 +150,23 @@ class Visualizer(MLP.Multilayerperceptron):
                 self.train(val, key)
 
                 ##if self.error_function(self.total_error) <= self.alpha:
-                if not self.training:
-                    if self.error_function([self.total_error[-1]]) <= self.alpha:
-                        key = random.choice(list(self.train_dict.keys()))
-                        val = random.choice(self.train_dict[key])
-                        if value_index < len(self.train_dict[key_index]):
-                            value_index += 1
-                        else:
-                            value_index = 0
+                #if not self.training:
+                 #   if self.error_function([self.total_error[-1]]) <= self.alpha:
+                  #      key = random.choice(list(self.train_dict.keys()))
+                   #     val = random.choice(self.train_dict[key])
+                    #    if value_index < len(self.train_dict[key_index]):
+                     #       value_index += 1
+                    #    else:
+                     #       value_index = 0
 
-                        if key_index < len(list(self.train_dict.keys())):
-                            if value_index > len(self.train_dict[key_index]) - 1:
-                                key_index += 1
-                                value_index = 0
-                            else:
-                                pass
-                        else:
-                            key_index = 0
+                     #   if key_index < len(list(self.train_dict.keys())):
+                    #        if value_index > len(self.train_dict[key_index]) - 1:
+                    #            key_index += 1
+                     #           value_index = 0
+                    #        else:
+                     #           pass
+                    #    else:
+                    #        key_index = 0
 
                 if key == list(self.train_dict.keys())[-1] and val == self.train_dict[list(self.train_dict.keys())[-1]][-1]:
                     if self.error_function(self.total_error) < self.alpha:
@@ -185,8 +180,6 @@ class Visualizer(MLP.Multilayerperceptron):
                     self.total_error = []
 
             self.update_nn()
-            t2 = time.time()
-            print(str(t2 - t1) + "t")
 
     def deactivate_check(self, g, i):
         for c in self.checkboxes:
@@ -449,4 +442,4 @@ class Visualizer(MLP.Multilayerperceptron):
         self.clear_e()
 
 
-v = Visualizer(1, 0.01,[2,3,1], 800, 600)
+v = Visualizer(1, 0.01,[2,4,1], 800, 600)

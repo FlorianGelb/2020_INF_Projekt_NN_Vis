@@ -7,7 +7,7 @@ class Multilayerperceptron:
         self.neurons = {}
         self.n_inputs = n_inputs
         self.shape = shape
-        self.activation = "LINEAR"
+        self.activation = "SINUS"
 
 
         self.shape.insert(0, n_inputs * shape[0])
