@@ -14,7 +14,7 @@ class Visualizer(MLP.Multilayerperceptron):
         MLP.Multilayerperceptron.__init__(self, n, eta, layers)
         pygame.init()
         self.total_error = []
-        self.alpha = 0.001
+        self.alpha = 0.01
         self.a =  0
         self.b = 0
         self.s = 20
@@ -154,29 +154,31 @@ class Visualizer(MLP.Multilayerperceptron):
                 self.train(val, key)
 
                 ##if self.error_function(self.total_error) <= self.alpha:
-                if self.error_function([self.total_error[-1]]) <= self.alpha and not self.training:
-                    key = random.choice(list(self.train_dict.keys()))
-                    val = random.choice(self.train_dict[key])
-                    if value_index < len(self.train_dict[key_index]):
-                        value_index += 1
-                    else:
-                        value_index = 0
-
-                    if key_index < len(list(self.train_dict.keys())):
-                        if value_index > len(self.train_dict[key_index]) - 1:
-                            key_index += 1
-                            value_index = 0
+                if not self.training:
+                    if self.error_function([self.total_error[-1]]) <= self.alpha:
+                        key = random.choice(list(self.train_dict.keys()))
+                        val = random.choice(self.train_dict[key])
+                        if value_index < len(self.train_dict[key_index]):
+                            value_index += 1
                         else:
-                            pass
-                    else:
-                        key_index = 0
+                            value_index = 0
 
+                        if key_index < len(list(self.train_dict.keys())):
+                            if value_index > len(self.train_dict[key_index]) - 1:
+                                key_index += 1
+                                value_index = 0
+                            else:
+                                pass
+                        else:
+                            key_index = 0
 
                 if key == list(self.train_dict.keys())[-1] and val == self.train_dict[list(self.train_dict.keys())[-1]][-1]:
                     if self.error_function(self.total_error) < self.alpha:
                         started = False
                         self.finished = True
+
                     self.total_error = []
+
             self.update_nn()
 
     def deactivate_check(self, g, i):
@@ -456,4 +458,4 @@ class Visualizer(MLP.Multilayerperceptron):
         self.clear_e()
 
 
-v = Visualizer(1, 0.01,[2,3,1], 800, 600)
+v = Visualizer(1, 0.01,[2,4,1], 800, 600)
