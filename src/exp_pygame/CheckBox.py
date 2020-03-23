@@ -2,7 +2,9 @@ import pygame
 
 
 class CheckBox:
-    def __init__(self, pos,text,size, color):
+    def __init__(self, pos,text,size, color, ident, group):
+        self.group = group
+        self.ident = ident
         self.x, self.y = pos
         self.size_x, self.size_y = size
         self.text = text
@@ -11,9 +13,10 @@ class CheckBox:
 
     def draw(self, win):
         pygame.draw.rect(win, self.c, (self.x, self.y, self.size_x, self.size_y))
-        font = pygame.font.SysFont("Arial", 15)
-        text = font.render(self.text, True, (255, 255, 255))
-        win.blit(text, (self.x, self.y))
+        if self.text is not None:
+            font = pygame.font.SysFont("Arial", 15)
+            text = font.render(self.text, True, (255, 255, 255))
+            win.blit(text, (self.x, self.y))
 
     def get_x(self):
         return self.x

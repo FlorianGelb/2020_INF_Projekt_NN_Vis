@@ -7,6 +7,7 @@ class Multilayerperceptron:
         self.neurons = {}
         self.n_inputs = n_inputs
         self.shape = shape
+        self.activation = "LINEAR"
 
 
         self.shape.insert(0, n_inputs * shape[0])
@@ -20,7 +21,7 @@ class Multilayerperceptron:
             for j in range(shape[i]):
                 n = Neuron.Neuron(i +1 == len(shape),i == 0,eta)
                 n.set_treshold(-100)
-                n.set_activation_function("SINUS")
+                n.set_activation_function(self.activation)
                 n.set_step(False)
 
                 if j == shape[i] -1 and shape[i] > 1 and i != 0:
