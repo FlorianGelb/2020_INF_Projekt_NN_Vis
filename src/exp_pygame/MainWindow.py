@@ -192,7 +192,7 @@ class Visualizer(MLP.Multilayerperceptron):
                 self.train(val, key)
 
                 if not self.training:
-
+                    pygame.time.wait(100)
                     if self.error_function([self.total_error[-1]]) <= self.alpha:
 
                         if value_index < len(self.train_dict[key_index]):
@@ -213,6 +213,8 @@ class Visualizer(MLP.Multilayerperceptron):
                     if self.error_function(self.total_error) < self.alpha:
                         started = False
                         self.finished = True
+                        self.total_error = []
+
                     self.total_error = []
 
             self.update_nn()
@@ -279,8 +281,12 @@ class Visualizer(MLP.Multilayerperceptron):
             label.set_y(new_y + (self.labels.index(label)) * (self.height * 0.023148))
 
         for checkbox in self.checkboxes:
-            checkbox.set_x(7 * new_x)
-            checkbox.set_y(new_y + (self.checkboxes.index(checkbox)) *  (self.height * 0.023148))
+            if checkbox.group == -1:
+                checkbox.set_x(0.00520833 * self.width)
+                checkbox.set_y(0.04629 * self.height)
+            else:
+                checkbox.set_x(7 * new_x)
+                checkbox.set_y(new_y + (self.checkboxes.index(checkbox)) *  (self.height * 0.023148))
 
 
     def create_UI(self):
@@ -330,7 +336,7 @@ class Visualizer(MLP.Multilayerperceptron):
         self.start = Button.Button((10, 25), "Start", (self.s * 5, self.s), (255, 0, 0))
         self.stop = Button.Button((125, 25), "Stop", (self.s * 5, self.s), (255, 0, 0))
 
-        checkbox = Checkbox.CheckBox((10, 75), "T", (self.s, self.s), (255,0,0), "TRA", 0)
+        checkbox = Checkbox.CheckBox((10, 75), "T", (self.s, self.s), (255,0,0), "TRA", -1)
         self.checkboxes.append(checkbox)
 
         self.checkboxes.append(Checkbox.CheckBox((40, 125), None, (self.s, self.s), (0,150,0), "SIN", 1))
