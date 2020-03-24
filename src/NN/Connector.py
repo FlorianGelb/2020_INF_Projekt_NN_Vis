@@ -11,14 +11,23 @@ class Connector:
         self.output_to = output_to
         self.input_value = 0
         self.output_value = 0
-        self.weight = random.random()
-        self.calc_output()
         self.dbg_w_array = []
         self.dbg_dw_array = []
+        self.bias = False
+
+        if self.bias:
+            self.weight = 0
+        else:
+            self.weight = random.random()
+
+        self.calc_output()
 
     def update_weight(self, d_w):
-        self.dbg_dw_array.append(d_w)
-        self.set_weight(self.weight + d_w)
+        if not self.bias:
+            self.dbg_dw_array.append(d_w)
+            self.set_weight(self.weight + d_w)
+        else:
+            self.weight = 0
 
     def get_output(self):
         return self.output_to
@@ -39,11 +48,14 @@ class Connector:
         self.dbg_w_array.append(w)
         self.weight = w
 
-
-
     def get_weight(self):
         return self.weight
 
     def calc_output(self):
         self.output_value = self.input_value * self.weight
         return self.output_value
+
+    def update_bias(self, b):
+        self.bias = b
+        if b:
+            self.weight = random.random()

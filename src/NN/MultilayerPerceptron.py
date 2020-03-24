@@ -6,14 +6,32 @@ class Multilayerperceptron:
     def __init__(self, n_inputs, shape):
         self.neurons = {}
         self.n_inputs = n_inputs
+        self.shape_orig = shape
         self.shape = shape
         self.activation = "SINUS"
+        self.bias = False
         self.update_config()
 
     def update_activation(self):
         for key in list(self.neurons.keys()):
             for neuron in self.neurons[key]:
                 neuron.set_activation_function(self.activation)
+
+    def toggle_bias(self):
+        if self.bias:
+            for key in list(self.neurons.keys()):
+                for neuron in self.neurons[key]:
+                    if neuron.bias:
+                        for cnt in neuron.get_output_cnts():
+                            cnt.update_bias(self.bias)
+        else:
+            for key in list(self.neurons.keys()):
+                for neuron in self.neurons[key]:
+                    if neuron.bias:
+                        for cnt in neuron.get_output_cnts():
+                            cnt.update_bias(self.bias)
+
+
 
     def update_config(self):
         self.neurons = {}
@@ -27,7 +45,7 @@ class Multilayerperceptron:
         for i in range(len(self.shape)):
             for j in range(self.shape[i]):
                 n = Neuron.Neuron(i + 1 == len(self.shape), i == 0)
-                n.set_threshold(-100)
+                n.set_threshold(-10000)
                 n.set_activation_function(self.activation)
                 n.set_step(False)
 
@@ -77,6 +95,7 @@ class Multilayerperceptron:
                                 neuron1.set_input_cnts(connector)
                                 self.neurons[0][h].add_output(connector)
 
+
                     elif key_prime == key_list[-2]:
                         c = Connector.Connector(neuron1, self.neurons[key_list[-1]][i])
                         neuron1.add_output(c)
@@ -90,6 +109,8 @@ class Multilayerperceptron:
                     c = Connector.Connector(neuron1, neuron2)
                     neuron1.add_output(c)
                     neuron2.set_input_cnts(c)
+
+        self.toggle_bias()
 
 
 
