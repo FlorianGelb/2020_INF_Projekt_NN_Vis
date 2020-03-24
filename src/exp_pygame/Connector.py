@@ -9,6 +9,9 @@ class Connector:
         self.text = text
         x_start, y_start = self.start
         x_end, y_end = self.end
+        self.v_x = x_end - x_start
+        self.v_y = y_end - x_end
+
         self.x = int((x_start + x_end) / 2)
         self.y = int((y_start + y_end) / 2)
         self.font = font

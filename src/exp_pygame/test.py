@@ -211,14 +211,8 @@ class Visualizer(MLP.Multilayerperceptron):
 
                 if key == list(self.train_dict.keys())[-1] and val == self.train_dict[list(self.train_dict.keys())[-1]][-1]:
                     if self.error_function(self.total_error) < self.alpha:
-                        print(self.alpha)
                         started = False
                         self.finished = True
-
-                        for key in list(self.train_dict.keys()):
-                            for val in self.train_dict[key]:
-                                print(self.pass_values(key, val), key, val)
-
                     self.total_error = []
 
             self.update_nn()
@@ -246,9 +240,8 @@ class Visualizer(MLP.Multilayerperceptron):
         return self.output_list
 
     def update_UI(self):
-
-        if self.s <= 15:
-            self.font = pygame.font.SysFont("Arial", self.s)
+        if self.width * 0.0078125 <= 15:
+            self.font = pygame.font.SysFont("Arial", int(self.width * 0.0078125))
         else:
             self.font = pygame.font.SysFont("Arial", 15)
 
@@ -258,10 +251,9 @@ class Visualizer(MLP.Multilayerperceptron):
             text = "0"
 
         text = self.font.render(text, True, (255, 255, 255))
-        self.surface.blit(text, (self.s * 0.66, self.s * 3.33))
+        self.surface.blit(text, (self.width * 0.0052083, self.height * 0.069444))
 
         self.output_list = self.generate_list()
-
 
         text = self.font.render("Ausgaben: "+str(self.output_list[0]), True, (255, 255, 255))
         self.surface.blit(text, (self.width - 150, 0))
@@ -275,20 +267,20 @@ class Visualizer(MLP.Multilayerperceptron):
         text = self.font.render("Ausgaben: " + str(self.output_list[3]), True, (255, 255, 255))
         self.surface.blit(text, (self.width - 150, 75))
 
-        if self.s <= 15:
-            new_x = self.s * 0.666
-            new_y = self.s * 6.666
+        if self.width* 0.005208333333 <= 8 and self.height * 0.02314 <= 8:
+            new_x = self.width * 0.005208333333
+            new_y = self.height * 0.02314
         else:
             new_x = 10
             new_y = 100
 
         for label in self.labels:
             label.set_x(new_x)
-            label.set_y(new_y + (self.labels.index(label)) * self.s * 1.333)
+            label.set_y(new_y + (self.labels.index(label)) * (self.height * 0.023148))
 
         for checkbox in self.checkboxes:
-            checkbox.set_x(new_x + 4 * self.s)
-            checkbox.set_y(new_y + (self.checkboxes.index(checkbox)) * self.s * 1.333)
+            checkbox.set_x(7 * new_x)
+            checkbox.set_y(new_y + (self.checkboxes.index(checkbox)) *  (self.height * 0.023148))
 
 
     def create_UI(self):
@@ -391,7 +383,7 @@ class Visualizer(MLP.Multilayerperceptron):
 
     def get_size(self):
         l,m = self.get_layer_max()
-        off = ((self.width  - 200) / (1.06 * (len(list(self.neurons.keys())) - 1)))
+        off = ((self.width  - 400) / (1.06 * (len(list(self.neurons.keys())) - 1)))
         off_2 = (self.height / (m * 0.06 + (l -1)))
 
         if off > off_2:
@@ -452,12 +444,12 @@ class Visualizer(MLP.Multilayerperceptron):
             c.draw(self.surface)
 
         for checkbox in self.checkboxes:
-            if self.s <= 10:
-                checkbox.size_x = self.s
-                checkbox.size_y = self.s
+            if 0.018 * self.height <= 20:
+                checkbox.size_x = 0.018 * self.height
+                checkbox.size_y = 0.018 * self.height
             else:
-                checkbox.size_x = 10
-                checkbox.size_y = 10
+                checkbox.size_x = 20
+                checkbox.size_y = 20
 
             if checkbox.group != 0:
                 checkbox.draw(self.surface)
@@ -465,12 +457,12 @@ class Visualizer(MLP.Multilayerperceptron):
         for label in self.labels:
             label.draw(self.surface, self.font)
 
-        self.start.set_size((self.s * 5, self.s))
-        self.stop.set_size((self.s * 5, self.s))
-        self.stop.set_x(self.start.get_colliding_x() + self.s * 0.66)
-        self.stop.set_y(self.s * 1.333)
-        self.start.set_x(self.s * 0.66)
-        self.start.set_y(self.s * 1.333)
+        self.start.set_size((self.width / 20, self.height / 50))
+        self.stop.set_size((self.width / 20, self.height / 50))
+        self.start.set_x(self.width* 0.005208333333)
+        self.start.set_y(self.height * 0.0231481481)
+        self.stop.set_x(self.start.get_colliding_x() + self.height * 0.0231481481)
+        self.stop.set_y(self.height * 0.0231481481)
         self.start.draw(self.surface, self.font)
         self.stop.draw(self.surface, self.font)
         self.surface.convert()
