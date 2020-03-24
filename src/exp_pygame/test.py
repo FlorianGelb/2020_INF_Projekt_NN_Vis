@@ -391,7 +391,7 @@ class Visualizer(MLP.Multilayerperceptron):
 
     def get_size(self):
         l,m = self.get_layer_max()
-        off = (self.width / (1.06 * (len(list(self.neurons.keys())) - 1)))
+        off = ((self.width  - 200) / (1.06 * (len(list(self.neurons.keys())) - 1)))
         off_2 = (self.height / (m * 0.06 + (l -1)))
 
         if off > off_2:
