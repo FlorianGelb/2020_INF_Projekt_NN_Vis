@@ -24,6 +24,12 @@ class CheckBox:
     def get_y(self):
         return self.y
 
+    def set_x(self, x):
+        self.x = x
+
+    def set_y(self, y):
+        self.y = y
+
     def get_colliding_x(self):
         return self.x + self.size_x
 

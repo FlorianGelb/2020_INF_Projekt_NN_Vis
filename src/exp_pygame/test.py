@@ -246,13 +246,19 @@ class Visualizer(MLP.Multilayerperceptron):
         return self.output_list
 
     def update_UI(self):
+
+        if self.s <= 15:
+            self.font = pygame.font.SysFont("Arial", self.s)
+        else:
+            self.font = pygame.font.SysFont("Arial", 15)
+
         try:
             text = self.ef + " " + str(round(self.error_function(self.total_error), 5))
         except Exception:
             text = "0"
 
         text = self.font.render(text, True, (255, 255, 255))
-        self.surface.blit(text, (10, 50))
+        self.surface.blit(text, (self.s * 0.66, self.s * 3.33))
 
         self.output_list = self.generate_list()
 
@@ -269,43 +275,64 @@ class Visualizer(MLP.Multilayerperceptron):
         text = self.font.render("Ausgaben: " + str(self.output_list[3]), True, (255, 255, 255))
         self.surface.blit(text, (self.width - 150, 75))
 
+        if self.s <= 15:
+            new_x = self.s * 0.666
+            new_y = self.s * 6.666
+        else:
+            new_x = 10
+            new_y = 100
+
+        for label in self.labels:
+            label.set_x(new_x)
+            label.set_y(new_y + (self.labels.index(label)) * self.s * 1.333)
+
+        for checkbox in self.checkboxes:
+            checkbox.set_x(new_x + 4 * self.s)
+            checkbox.set_y(new_y + (self.checkboxes.index(checkbox)) * self.s * 1.333)
+
+
     def create_UI(self):
-        self.labels.append(Label.Label("Aktivierungsfunktion:", True, (255, 255, 255), 15, 10, 100, self.font))
-        self.labels.append(Label.Label("SIN", True, (255, 255, 255), 15, 10, 125,self.font))
-        self.labels.append(Label.Label("SIG", True, (255, 255, 255), 15, 10, 150, self.font))
-        self.labels.append(Label.Label("LIN", True, (255, 255, 255), 15, 10, 175, self.font))
-        self.labels.append(Label.Label("REL", True, (255, 255, 255), 15, 10, 200, self.font))
-        self.labels.append(Label.Label("STP", True, (255, 255, 255), 15, 10, 225, self.font))
+        self.labels.append(Label.Label("Aktivierungsfunktion:", True, (255, 255, 255), 15, 10, 100))
+        self.labels.append(Label.Label("SIN", True, (255, 255, 255), 15, 10, 125))
+        self.labels.append(Label.Label("SIG", True, (255, 255, 255), 15, 10, 150))
+        self.labels.append(Label.Label("LIN", True, (255, 255, 255), 15, 10, 175))
+        self.labels.append(Label.Label("REL", True, (255, 255, 255), 15, 10, 200))
+        self.labels.append(Label.Label("STP", True, (255, 255, 255), 15, 10, 225))
+        self.labels.append(Label.Label(None, True, (255, 255, 255), 15, 10, 250))
 
-        self.labels.append(Label.Label("Fehlerfunktion", True, (255, 255, 255), 15, 10, 275, self.font))
-        self.labels.append(Label.Label("MAE", True, (255, 255, 255), 15, 10, 300, self.font))
-        self.labels.append(Label.Label("MSE", True, (255, 255, 255), 15, 10, 325, self.font))
-        self.labels.append(Label.Label("RMSE", True, (255, 255, 255), 15, 10, 350, self.font))
+        self.labels.append(Label.Label("Fehlerfunktion", True, (255, 255, 255), 15, 10, 275))
+        self.labels.append(Label.Label("MAE", True, (255, 255, 255), 15, 10, 300))
+        self.labels.append(Label.Label("MSE", True, (255, 255, 255), 15, 10, 325))
+        self.labels.append(Label.Label("RMSE", True, (255, 255, 255), 15, 10, 350))
+        self.labels.append(Label.Label(None, True, (255, 255, 255), 15, 10, 375))
 
-        self.labels.append(Label.Label("Training", True, (255, 255, 255), 15, 10, 400, self.font))
-        self.labels.append(Label.Label("OR", True, (255, 255, 255), 15, 10, 425,self.font))
-        self.labels.append(Label.Label("AND", True, (255, 255, 255), 15, 10, 450, self.font))
-        self.labels.append(Label.Label("XOR", True, (255, 255, 255), 15, 10, 475, self.font))
+        self.labels.append(Label.Label("Training", True, (255, 255, 255), 15, 10, 400))
+        self.labels.append(Label.Label("OR", True, (255, 255, 255), 15, 10, 425))
+        self.labels.append(Label.Label("AND", True, (255, 255, 255), 15, 10, 450))
+        self.labels.append(Label.Label("XOR", True, (255, 255, 255), 15, 10, 475))
+        self.labels.append(Label.Label(None, True, (255, 255, 255), 15, 10, 500))
 
-        self.labels.append(Label.Label("Lernrate:", True, (255, 255, 255), 15, 10, 525, self.font))
-        self.labels.append(Label.Label("1*10^-1", True, (255, 255, 255), 15, 10, 550, self.font))
-        self.labels.append(Label.Label("1 * 10^-2:", True, (255, 255, 255), 15, 10, 575, self.font))
-        self.labels.append(Label.Label("1 * 10*-3:", True, (255, 255, 255), 15, 10, 600, self.font))
-        self.labels.append(Label.Label("1 * 10*-4:", True, (255, 255, 255), 15, 10, 625, self.font))
-        self.labels.append(Label.Label("1 * 10*-5:", True, (255, 255, 255), 15, 10, 650, self.font))
+        self.labels.append(Label.Label("Lernrate:", True, (255, 255, 255), 15, 10, 525))
+        self.labels.append(Label.Label("1*10^-1", True, (255, 255, 255), 15, 10, 550))
+        self.labels.append(Label.Label("1 * 10^-2:", True, (255, 255, 255), 15, 10, 575))
+        self.labels.append(Label.Label("1 * 10*-3:", True, (255, 255, 255), 15, 10, 600))
+        self.labels.append(Label.Label("1 * 10*-4:", True, (255, 255, 255), 15, 10, 625))
+        self.labels.append(Label.Label("1 * 10*-5:", True, (255, 255, 255), 15, 10, 650))
+        self.labels.append(Label.Label(None, True, (255, 255, 255), 15, 10, 675))
 
-        self.labels.append(Label.Label("Fehlerrate:", True, (255, 255, 255), 15, 10, 700, self.font))
-        self.labels.append(Label.Label("1*10^-1", True, (255, 255, 255), 15, 10, 725, self.font))
-        self.labels.append(Label.Label("1 * 10^-2:", True, (255, 255, 255), 15, 10, 750, self.font))
-        self.labels.append(Label.Label("1 * 10*-3:", True, (255, 255, 255), 15, 10, 775, self.font))
-        self.labels.append(Label.Label("1 * 10*-4:", True, (255, 255, 255), 15, 10, 800, self.font))
-        self.labels.append(Label.Label("1 * 10*-5:", True, (255, 255, 255), 15, 10, 825, self.font))
+        self.labels.append(Label.Label("Fehlerrate:", True, (255, 255, 255), 15, 10, 700))
+        self.labels.append(Label.Label("1*10^-1", True, (255, 255, 255), 15, 10, 725))
+        self.labels.append(Label.Label("1 * 10^-2:", True, (255, 255, 255), 15, 10, 750))
+        self.labels.append(Label.Label("1 * 10*-3:", True, (255, 255, 255), 15, 10, 775))
+        self.labels.append(Label.Label("1 * 10*-4:", True, (255, 255, 255), 15, 10, 800))
+        self.labels.append(Label.Label("1 * 10*-5:", True, (255, 255, 255), 15, 10, 825))
+        self.labels.append(Label.Label(None, True, (255, 255, 255), 15, 10, 850))
 
-        self.labels.append(Label.Label("Anzahl Neuronen in der Hidden Layer:", True, (255, 255, 255), 15, 10, 875, self.font))
-        self.labels.append(Label.Label("2", True, (255, 255, 255), 15, 10, 900, self.font))
-        self.labels.append(Label.Label("3", True, (255, 255, 255), 15, 10, 925, self.font))
-        self.labels.append(Label.Label("4", True, (255, 255, 255), 15, 10, 950, self.font))
-        self.labels.append(Label.Label("5", True, (255, 255, 255), 15, 10, 975, self.font))
+        self.labels.append(Label.Label("Anzahl Neuronen in der Hidden Layer:", True, (255, 255, 255), 15, 10, 875))
+        self.labels.append(Label.Label("2", True, (255, 255, 255), 15, 10, 900))
+        self.labels.append(Label.Label("3", True, (255, 255, 255), 15, 10, 925))
+        self.labels.append(Label.Label("4", True, (255, 255, 255), 15, 10, 950))
+        self.labels.append(Label.Label("5", True, (255, 255, 255), 15, 10, 975))
 
 
         self.start = Button.Button((10, 25), "Start", (self.s * 5, self.s), (255, 0, 0))
@@ -320,16 +347,22 @@ class Visualizer(MLP.Multilayerperceptron):
         self.checkboxes.append(Checkbox.CheckBox((40, 175), None, (self.s, self.s), (255, 0, 0), "LIN", 1))
         self.checkboxes.append(Checkbox.CheckBox((40, 200), None, (self.s, self.s), (255, 0, 0), "REL", 1))
         self.checkboxes.append(Checkbox.CheckBox((40, 225), None, (self.s, self.s), (255, 0, 0), "STP", 1))
+        self.checkboxes.append(Checkbox.CheckBox((40, 250), None, (0, 0), (255, 0, 0), None, 0))
+        self.checkboxes.append(Checkbox.CheckBox((40, 275), None, (0, 0), (255, 0, 0), None, 0))
 
         self.checkboxes.append(Checkbox.CheckBox((50, 300), None, (self.s, self.s), (0, 150, 0), "MAE", 2))
         self.checkboxes[-1].set_checked(True)
         self.checkboxes.append(Checkbox.CheckBox((50, 325), None, (self.s, self.s), (255, 0, 0), "MSE", 2))
         self.checkboxes.append(Checkbox.CheckBox((50, 350), None, (self.s, self.s), (255, 0, 0), "RMSE", 2))
+        self.checkboxes.append(Checkbox.CheckBox((40, 375), None, (0, 0), (255, 0, 0), None, 0))
+        self.checkboxes.append(Checkbox.CheckBox((40, 400), None, (0, 0), (255, 0, 0), None, 0))
 
         self.checkboxes.append(Checkbox.CheckBox((45, 425), None, (self.s, self.s), (0, 150, 0), "OR", 3))
         self.checkboxes[-1].set_checked(True)
         self.checkboxes.append(Checkbox.CheckBox((45, 450), None, (self.s, self.s), (255, 0, 0), "AND", 3))
         self.checkboxes.append(Checkbox.CheckBox((45, 475), None, (self.s, self.s), (255, 0, 0), "XOR", 3))
+        self.checkboxes.append(Checkbox.CheckBox((40, 500), None, (0, 0), (255, 0, 0), None, 0))
+        self.checkboxes.append(Checkbox.CheckBox((40, 525), None, (0, 0), (255, 0, 0), None, 0))
 
         self.checkboxes.append(Checkbox.CheckBox((70, 550), None, (self.s, self.s), (0, 150, 0), "-1", 4))
         self.checkboxes[-1].set_checked(True)
@@ -337,6 +370,8 @@ class Visualizer(MLP.Multilayerperceptron):
         self.checkboxes.append(Checkbox.CheckBox((70, 600), None, (self.s, self.s), (255, 0, 0), "-3", 4))
         self.checkboxes.append(Checkbox.CheckBox((70, 625), None, (self.s, self.s), (255, 0, 0), "-4", 4))
         self.checkboxes.append(Checkbox.CheckBox((70, 650), None, (self.s, self.s), (255, 0, 0), "-5", 4))
+        self.checkboxes.append(Checkbox.CheckBox((40, 675), None, (0, 0), (255, 0, 0), None, 0))
+        self.checkboxes.append(Checkbox.CheckBox((40, 700), None, (0, 0), (255, 0, 0), None, 0))
 
         self.checkboxes.append(Checkbox.CheckBox((70, 725), None, (self.s, self.s), (0, 150, 0), "-1", 5))
         self.checkboxes[-1].set_checked(True)
@@ -344,6 +379,8 @@ class Visualizer(MLP.Multilayerperceptron):
         self.checkboxes.append(Checkbox.CheckBox((70, 775), None, (self.s, self.s), (255, 0, 0), "-3", 5))
         self.checkboxes.append(Checkbox.CheckBox((70, 800), None, (self.s, self.s), (255, 0, 0), "-4", 5))
         self.checkboxes.append(Checkbox.CheckBox((70, 825), None, (self.s, self.s), (255, 0, 0), "-5", 5))
+        self.checkboxes.append(Checkbox.CheckBox((40, 850), None, (0, 0), (255, 0, 0), None, 0))
+        self.checkboxes.append(Checkbox.CheckBox((40, 875), None, (0, 0), (255, 0, 0), None, 0))
 
         self.checkboxes.append(Checkbox.CheckBox((70, 900), None, (self.s, self.s), (255, 0, 0), "-2", 6))
         self.checkboxes.append(Checkbox.CheckBox((70, 925), None, (self.s, self.s), (0, 150, 0), "-3", 6))
@@ -415,19 +452,27 @@ class Visualizer(MLP.Multilayerperceptron):
             c.draw(self.surface)
 
         for checkbox in self.checkboxes:
-            checkbox.draw(self.surface)
             if self.s <= 10:
-                checkbox.size_x = self.s * 2
-                checkbox.size_y = self.s * 2
+                checkbox.size_x = self.s
+                checkbox.size_y = self.s
             else:
-                checkbox.size_x = 20
-                checkbox.size_y = 20
+                checkbox.size_x = 10
+                checkbox.size_y = 10
+
+            if checkbox.group != 0:
+                checkbox.draw(self.surface)
 
         for label in self.labels:
-            label.draw(self.surface)
+            label.draw(self.surface, self.font)
 
-        self.stop.draw(self.surface)
-        self.start.draw(self.surface)
+        self.start.set_size((self.s * 5, self.s))
+        self.stop.set_size((self.s * 5, self.s))
+        self.stop.set_x(self.start.get_colliding_x() + self.s * 0.66)
+        self.stop.set_y(self.s * 1.333)
+        self.start.set_x(self.s * 0.66)
+        self.start.set_y(self.s * 1.333)
+        self.start.draw(self.surface, self.font)
+        self.stop.draw(self.surface, self.font)
         self.surface.convert()
 
     def update_nn(self):
