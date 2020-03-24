@@ -126,7 +126,7 @@ class Visualizer(MLP.Multilayerperceptron):
                                             self.activation = "STEP"
                                         if checkbox.ident == "TAN":
                                             self.activation = "TAN"
-                                        self.update_config()
+                                        self.update_activation()
 
                                     if checkbox.group == 2:
                                         if checkbox.ident == "MSE":
@@ -172,19 +172,18 @@ class Visualizer(MLP.Multilayerperceptron):
 
                                     if checkbox.group == 6:
                                         if checkbox.ident == "-2":
-                                            self.layers = [2, 2, 1]
+                                            self.shape = [2, 2, 1]
 
                                         if checkbox.ident == "-3":
-                                            self.layers = [2, 3, 1]
+                                            self.shape = [2, 3, 1]
 
                                         if checkbox.ident == "-4":
-                                            self.layers = [2, 4, 1]
+                                            self.shape = [2, 4, 1]
 
-                                        if checkbox.ident == "4":
-                                            self.layers = [2,5,1]
+                                        if checkbox.ident == "-5":
+                                            self.shape = [2, 5, 1]
 
                                         self.update_config()
-
                                 else:
                                     checkbox.c = (255, 0, 0)
 
@@ -346,9 +345,9 @@ class Visualizer(MLP.Multilayerperceptron):
         self.checkboxes.append(Checkbox.CheckBox((70, 800), None, (self.s, self.s), (255, 0, 0), "-4", 5))
         self.checkboxes.append(Checkbox.CheckBox((70, 825), None, (self.s, self.s), (255, 0, 0), "-5", 5))
 
-        self.checkboxes.append(Checkbox.CheckBox((70, 900), None, (self.s, self.s), (0, 150, 0), "-2", 6))
+        self.checkboxes.append(Checkbox.CheckBox((70, 900), None, (self.s, self.s), (255, 0, 0), "-2", 6))
+        self.checkboxes.append(Checkbox.CheckBox((70, 925), None, (self.s, self.s), (0, 150, 0), "-3", 6))
         self.checkboxes[-1].set_checked(True)
-        self.checkboxes.append(Checkbox.CheckBox((70, 925), None, (self.s, self.s), (255, 0, 0), "-3", 6))
         self.checkboxes.append(Checkbox.CheckBox((70, 950), None, (self.s, self.s), (255, 0, 0), "-4", 6))
         self.checkboxes.append(Checkbox.CheckBox((70, 975), None, (self.s, self.s), (255, 0, 0), "-5", 6))
 

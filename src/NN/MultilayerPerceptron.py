@@ -10,8 +10,14 @@ class Multilayerperceptron:
         self.activation = "SINUS"
         self.update_config()
 
+    def update_activation(self):
+        for key in list(self.neurons.keys()):
+            for neuron in self.neurons[key]:
+                neuron.set_activation_function(self.activation)
+
     def update_config(self):
         self.neurons = {}
+        Neuron.Neuron.Neuron_ID = 0
         self.shape.insert(0, self.n_inputs * self.shape[0])
         self.shape.insert(-1, self.shape[-1])
 
