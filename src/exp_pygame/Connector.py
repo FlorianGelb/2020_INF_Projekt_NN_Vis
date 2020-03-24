@@ -12,8 +12,8 @@ class Connector:
         x_end, y_end = self.end
         self.v_x = x_end - x_start
         self.v_y = y_end - y_start
-        self.x = int(x_start + 0.15 * self.v_x)
-        self.y = int(y_start + 0.15 * self.v_y)
+        self.x = int(x_start + 0.2 * self.v_x)
+        self.y = int(y_start + 0.2 * self.v_y)
         self.font = font
 
     def draw(self, win):

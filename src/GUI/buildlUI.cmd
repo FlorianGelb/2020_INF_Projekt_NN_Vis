@@ -1,1 +1,0 @@
-pyuic5 MainWindowGUI.ui> MainWindowGUI.py

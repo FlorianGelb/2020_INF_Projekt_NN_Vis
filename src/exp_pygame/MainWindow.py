@@ -26,7 +26,7 @@ class Visualizer(MLP.Multilayerperceptron):
         self.output_list = []
         self.finished = True
         self.training = True
-        self.digit = 4
+        self.digit = 5
         self.ef = "MAE"
         self.train_dict = {1:[(0,1) ,(1, 0), (1,1)], 0:[(0,0)]}
         self.eta = 0.1
