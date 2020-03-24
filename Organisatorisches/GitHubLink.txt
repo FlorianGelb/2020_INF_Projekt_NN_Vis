@@ -1,0 +1,3 @@
+https://github.com/FlorianGelb/2020_INF_Projekt_NN_Vis
+Download:
+https://github.com/FlorianGelb/2020_INF_Projekt_NN_Vis/releases/download/2/MainWindow.rar
