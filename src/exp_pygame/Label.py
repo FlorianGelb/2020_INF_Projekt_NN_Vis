@@ -1,5 +1,3 @@
-import pygame
-
 class Label:
     def __init__(self, text, aa, c, s, x, y):
         self.text = text
@@ -8,7 +6,6 @@ class Label:
         self.s = s
         self.x = x
         self.y = y
-
 
     def draw(self, win, font):
         if self.text is not None:

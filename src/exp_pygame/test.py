@@ -550,13 +550,13 @@ class Visualizer(MLP.Multilayerperceptron):
                 neuron.e = 0
 
     def MSE(self, total_error):
-        return (1/len(total_error) * (sum(total_error) ** 2))
+        return 1/len(total_error) * (sum(total_error) ** 2)
 
     def RMSE(self, total_error):
         return self.MSE(total_error) ** 0.5
 
     def MAE(self, total_error):
-        return (1/len(total_error) * (sum([abs(e) for e in total_error])))
+        return 1/len(total_error) * (sum([abs(e) for e in total_error]))
 
     def train(self, inp, expected):
         self.output = self.pass_values(expected, inp)
@@ -567,4 +567,4 @@ class Visualizer(MLP.Multilayerperceptron):
         self.clear_e()
 
 
-v = Visualizer(1,[2,3,1], 1920, 1080)
+v = Visualizer(1, [2, 3, 1], 1280, 1024)
