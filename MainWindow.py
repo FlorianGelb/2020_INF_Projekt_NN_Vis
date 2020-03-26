@@ -17,7 +17,7 @@ class Visualizer(MLP.Multilayerperceptron):
         self.layers = layers
         self.total_error = []
         self.alpha = 0.1
-        self.a =  0
+        self.a = 0
         self.b = 0
         self.s = 20
         self.height = height
@@ -52,21 +52,6 @@ class Visualizer(MLP.Multilayerperceptron):
 
             key = list(self.train_dict.keys())[key_index]
             val = self.train_dict[key][value_index]
-
-            if self.training:
-                if value_index < len(self.train_dict[key_index]):
-                    value_index += 1
-                else:
-                    value_index = 0
-
-                if key_index < len(list(self.train_dict.keys())):
-                    if value_index > len(self.train_dict[key_index]) - 1:
-                        key_index += 1
-                        value_index = 0
-                    else:
-                        pass
-                else:
-                    key_index = 0
 
             for event in pygame.event.get():
                 mx, my = pygame.mouse.get_pos()
@@ -112,6 +97,12 @@ class Visualizer(MLP.Multilayerperceptron):
                                     key_index = 0
                                     value_index = 0
                                     self.deactivate_check(checkbox.group, checkbox.ident)
+
+                                    if checkbox.group == -2:
+                                        checkbox.c = (255, 0, 0)
+                                        self.bias = checkbox.get_checked()
+                                        print(self.bias)
+                                        self.toggle_bias()
 
                                     if checkbox.group == 1:
                                         if checkbox.ident == "SIN":
@@ -187,6 +178,12 @@ class Visualizer(MLP.Multilayerperceptron):
                                 else:
                                     checkbox.c = (255, 0, 0)
 
+                                    if checkbox.group == -2:
+                                        checkbox.c = (0, 150, 0)
+                                        self.bias = checkbox.get_checked()
+                                        self.toggle_bias()
+
+
                             checkbox.set_checked(not checkbox.get_checked())
             if started:
                 self.train(val, key)
@@ -209,6 +206,21 @@ class Visualizer(MLP.Multilayerperceptron):
                         else:
                             key_index = 0
 
+                if self.training:
+                    if value_index < len(self.train_dict[key_index]):
+                        value_index += 1
+                    else:
+                        value_index = 0
+
+                    if key_index < len(list(self.train_dict.keys())):
+                        if value_index > len(self.train_dict[key_index]) - 1:
+                            key_index += 1
+                            value_index = 0
+                        else:
+                            pass
+                    else:
+                        key_index = 0
+
                 if key == list(self.train_dict.keys())[-1] and val == self.train_dict[list(self.train_dict.keys())[-1]][-1]:
                     if self.error_function(self.total_error) < self.alpha:
                         started = False
@@ -219,7 +231,6 @@ class Visualizer(MLP.Multilayerperceptron):
 
             self.update_nn()
 
-
     def deactivate_check(self, g, i):
         for c in self.checkboxes:
             if c.group == g and c.ident != i:
@@ -229,7 +240,7 @@ class Visualizer(MLP.Multilayerperceptron):
     def create(self):
         self.get_size()
         self.create_nn()
-        self.update_UI()
+        self.update_ui()
 
     def generate_list(self):
         l = []
@@ -241,7 +252,7 @@ class Visualizer(MLP.Multilayerperceptron):
             return l
         return self.output_list
 
-    def update_UI(self):
+    def update_ui(self):
         if self.width * 0.0078125 <= 15:
             self.font = pygame.font.SysFont("Arial", int(self.width * 0.0078125))
         else:
@@ -282,11 +293,16 @@ class Visualizer(MLP.Multilayerperceptron):
 
         for checkbox in self.checkboxes:
             if checkbox.group == -1:
-                checkbox.set_x(0.00520833 * self.width)
+                checkbox.set_x(0.01041666666 * self.width)
                 checkbox.set_y(0.04629 * self.height)
+
+            elif checkbox.group == -2:
+                checkbox.set_x(0.052083 * self.width)
+                checkbox.set_y(0.04629 * self.height)
+
             else:
                 checkbox.set_x(7 * new_x)
-                checkbox.set_y(new_y + (self.checkboxes.index(checkbox)) *  (self.height * 0.023148))
+                checkbox.set_y(new_y + (self.checkboxes.index(checkbox) -1) *  (self.height * 0.023148))
 
 
     def create_UI(self):
@@ -313,17 +329,17 @@ class Visualizer(MLP.Multilayerperceptron):
         self.labels.append(Label.Label("Lernrate:", True, (255, 255, 255), 15, 10, 525))
         self.labels.append(Label.Label("1*10^-1", True, (255, 255, 255), 15, 10, 550))
         self.labels.append(Label.Label("1 * 10^-2:", True, (255, 255, 255), 15, 10, 575))
-        self.labels.append(Label.Label("1 * 10*-3:", True, (255, 255, 255), 15, 10, 600))
-        self.labels.append(Label.Label("1 * 10*-4:", True, (255, 255, 255), 15, 10, 625))
-        self.labels.append(Label.Label("1 * 10*-5:", True, (255, 255, 255), 15, 10, 650))
+        self.labels.append(Label.Label("1 * 10^-3:", True, (255, 255, 255), 15, 10, 600))
+        self.labels.append(Label.Label("1 * 10^-4:", True, (255, 255, 255), 15, 10, 625))
+        self.labels.append(Label.Label("1 * 10^-5:", True, (255, 255, 255), 15, 10, 650))
         self.labels.append(Label.Label(None, True, (255, 255, 255), 15, 10, 675))
 
         self.labels.append(Label.Label("Fehlerrate:", True, (255, 255, 255), 15, 10, 700))
         self.labels.append(Label.Label("1*10^-1", True, (255, 255, 255), 15, 10, 725))
         self.labels.append(Label.Label("1 * 10^-2:", True, (255, 255, 255), 15, 10, 750))
-        self.labels.append(Label.Label("1 * 10*-3:", True, (255, 255, 255), 15, 10, 775))
-        self.labels.append(Label.Label("1 * 10*-4:", True, (255, 255, 255), 15, 10, 800))
-        self.labels.append(Label.Label("1 * 10*-5:", True, (255, 255, 255), 15, 10, 825))
+        self.labels.append(Label.Label("1 * 10^-3:", True, (255, 255, 255), 15, 10, 775))
+        self.labels.append(Label.Label("1 * 10^-4:", True, (255, 255, 255), 15, 10, 800))
+        self.labels.append(Label.Label("1 * 10^-5:", True, (255, 255, 255), 15, 10, 825))
         self.labels.append(Label.Label(None, True, (255, 255, 255), 15, 10, 850))
 
         self.labels.append(Label.Label("Anzahl Neuronen in der Hidden Layer:", True, (255, 255, 255), 15, 10, 875))
@@ -338,6 +354,8 @@ class Visualizer(MLP.Multilayerperceptron):
 
         checkbox = Checkbox.CheckBox((10, 75), "T", (self.s, self.s), (255,0,0), "TRA", -1)
         self.checkboxes.append(checkbox)
+
+        self.checkboxes.append(Checkbox.CheckBox((20, 75), "Bias", (self.s, self.s), (0, 150, 0), "SIN", -2))
 
         self.checkboxes.append(Checkbox.CheckBox((40, 125), None, (self.s, self.s), (0,150,0), "SIN", 1))
         self.checkboxes[-1].set_checked(True)
@@ -439,8 +457,8 @@ class Visualizer(MLP.Multilayerperceptron):
                                     end = (n.get_x(), n.get_y())
                                 if cnt.get_input_neuron().n_id == n.get_id():
                                     start = (n.get_x(), n.get_y())
-                            self.connections.append(Connector.Connector(start, end, (255, 0, 0), str(round(cnt.get_weight(), self.digit)), self.font))
 
+                            self.connections.append(Connector.Connector(start, end, (255, 0, 0), str(round(cnt.get_weight(), self.digit)), self.font))
 
     def draw(self):
         for neuron in self.viz_neurons:
@@ -479,7 +497,7 @@ class Visualizer(MLP.Multilayerperceptron):
         Neuron.Neuron.id = 0
         self.connections = []
         self.create()
-        self.update_UI()
+        self.update_ui()
         self.draw()
         self.win.blit(self.surface, (0, 0))
         pygame.display.update()
