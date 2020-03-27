@@ -109,6 +109,7 @@ class Neuron:
         if self.activation_function_type == "STEP":
             return 1
 
+
     def step(self, x):
         if x > 0:
             return 1
@@ -147,9 +148,11 @@ class Neuron:
     def der_sinus(x):
         return math.cos(x)
 
+
     @staticmethod
     def der_sig(x):
         return((math.e ** -x)/((1+math.e**-x)**2))
+
 
     def generate_output(self, dbg=False):
         new_output = self.activation_function(self.scalar_product())

@@ -84,12 +84,15 @@ class Visualizer(MLP.Multilayerperceptron):
                                 if checkbox.get_checked():
                                     checkbox.c = (0, 150, 0)
                                     checkbox.text = "V"
-                                    self.training = not self.training
+                                    self.training = False
                                     key_index = 0
                                     value_index = 0
                                 else:
                                     checkbox.c = (255, 0, 0)
+                                    self.training = True
                                     checkbox.text = "T"
+                                    key_index = 0
+                                    value_index = 0
 
                             if not started:
                                 if checkbox.get_checked():
@@ -182,7 +185,6 @@ class Visualizer(MLP.Multilayerperceptron):
                                         checkbox.c = (0, 150, 0)
                                         self.bias = checkbox.get_checked()
                                         self.toggle_bias()
-
 
                             checkbox.set_checked(not checkbox.get_checked())
             if started:
